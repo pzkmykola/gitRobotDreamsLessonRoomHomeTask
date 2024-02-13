@@ -5,7 +5,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/container"
-        android:name="...ListFragment"
+        android:name="com.example.roomongit.ListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
