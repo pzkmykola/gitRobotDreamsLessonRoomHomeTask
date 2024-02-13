@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ListFragment : Fragment() {
-    private lateinit var viewModel: EmployeeViewModel
+    private lateinit var viewModel: TodoViewModel
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -22,7 +22,7 @@ class ListFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(EmployeeViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(TodoViewModel::class.java)
         val listView: RecyclerView = view.findViewById(R.id.list)
         val fab: FloatingActionButton = view.findViewById(R.id.fabButton)
         listView.layoutManager = LinearLayoutManager(requireContext())
@@ -30,15 +30,15 @@ class ListFragment : Fragment() {
         listView.adapter = adapter
         viewModel.listState.observe(viewLifecycleOwner) { uiState ->
             when (uiState) {
-                is EmployeeViewModel.ListState.EmptyList -> Unit
-                is EmployeeViewModel.ListState.UpdatedList -> {
+                is TodoViewModel.ListState.EmptyList -> Unit
+                is TodoViewModel.ListState.UpdatedList -> {
                     adapter.updateItems(uiState.list)
                 }
             }
         }
 
         fab.setOnClickListener {
-            val fragment = AddEmployeeFragment()
+            val fragment = AddTodoFragment()
             parentFragmentManager.beginTransaction()
                 .add(R.id.container, fragment)
                 .addToBackStack(fragment.javaClass.name)
@@ -57,7 +57,7 @@ class ListFragment : Fragment() {
             ): Boolean = false
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 if (direction == ItemTouchHelper.END) {
-                    viewModel.removeEmployee(adapter.items[viewHolder.adapterPosition])
+                    viewModel.removeTodo(adapter.items[viewHolder.adapterPosition])
                 }
             }
         })

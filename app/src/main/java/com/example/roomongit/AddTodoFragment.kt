@@ -8,10 +8,9 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 
-class AddEmployeeFragment: Fragment() {
-    private lateinit var viewModel: EmployeeViewModel
+class AddTodoFragment: Fragment() {
+    private lateinit var viewModel: TodoViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,14 +22,14 @@ class AddEmployeeFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(EmployeeViewModel::class.java)
-        val naneInputField:EditText = view.findViewById(R.id.nameInputField)
-        val positionInputField:EditText = view.findViewById(R.id.positionInputField)
+        viewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
+        val naneInputField:EditText = view.findViewById(R.id.taskInputField)
+        val positionInputField:EditText = view.findViewById(R.id.progressInputField)
         val addButton : Button = view.findViewById(R.id.addButton)
         addButton.setOnClickListener {
-            val name = naneInputField.text.toString()
-            val position = positionInputField.text.toString()
-            viewModel.addEmployee(name, position)
+            val task = naneInputField.text.toString()
+            val progress = positionInputField.text.toString()
+            viewModel.addTodo(task, progress)
             parentFragmentManager.popBackStack()
         }
     }

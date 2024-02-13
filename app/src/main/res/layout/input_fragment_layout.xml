@@ -7,14 +7,14 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/nameInputField"
-        android:hint="name"
+        android:id="@+id/taskInputField"
+        android:hint="task"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <EditText
-        android:id="@+id/positionInputField"
-        android:hint="position"
+        android:id="@+id/progressInputField"
+        android:hint="progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

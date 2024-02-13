@@ -11,22 +11,22 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 
 @Entity
-data class Employee (@PrimaryKey(autoGenerate = true) val id:Int? = null, val name:String, val position: String)
+data class Todo (@PrimaryKey(autoGenerate = true) val id:Int? = null, val task:String, val progress: String)
 
 @Dao
-interface EmployeeDao {
+interface TodoDao {
 
     @Insert
-    fun add(employee: Employee)
+    fun add(todo: Todo)
 
     @Delete
-    fun delete(employee: Employee)
+    fun delete(todo: Todo)
 
-    @Query("SELECT * FROM employee")
-    fun getAll(): LiveData<List<Employee>>
+    @Query("SELECT * FROM todo")
+    fun getAll(): LiveData<List<Todo>>
 }
 
-@Database(entities = [Employee::class], version = 1)
-abstract class EmployeeDatabase: RoomDatabase(){
-    abstract fun employeeDao():EmployeeDao
+@Database(entities = [Todo::class], version = 1)
+abstract class TodoDatabase: RoomDatabase(){
+    abstract fun todoDao():TodoDao
 }

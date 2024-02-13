@@ -1,18 +1,17 @@
 package com.example.roomongit
 
 import android.app.Application
-import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
 import androidx.room.Room
-import com.example.roomongit.db.EmployeeDatabase
+import com.example.roomongit.db.TodoDatabase
 
 class MyApplication: Application() {
-    lateinit var repo:EmployeeRepository
+    lateinit var repo:TodoRepository
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-        val db = Room.databaseBuilder(this, EmployeeDatabase::class.java, "employee_database").build()
-        repo = EmployeeRepository(db)
+        val db = Room.databaseBuilder(this, TodoDatabase::class.java, "todo_database").build()
+        repo = TodoRepository(db)
     }
 
     companion object{
