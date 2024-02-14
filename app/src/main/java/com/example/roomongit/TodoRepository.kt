@@ -1,7 +1,7 @@
 package com.example.roomongit
 
-import com.example.roomongit.db.Todo
-import com.example.roomongit.db.TodoDatabase
+import com.example.roomongit.dbnew.Todo
+import com.example.roomongit.dbnew.TodoDatabase
 import java.util.concurrent.Executors
 
 class TodoRepository(private val database: TodoDatabase) {
@@ -14,3 +14,4 @@ class TodoRepository(private val database: TodoDatabase) {
         executor.execute { database.todoDao().delete(todo) }
     }
 }
+
