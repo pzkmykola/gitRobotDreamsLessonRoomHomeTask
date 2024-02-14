@@ -4,14 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.roomongit.db.Todo
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ListFragment : Fragment() {
@@ -29,7 +26,7 @@ class ListFragment : Fragment() {
         val listView: RecyclerView = view.findViewById(R.id.list)
         val fab: FloatingActionButton = view.findViewById(R.id.fabButton)
         listView.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = EmployeeListAdapter()
+        val adapter = TodoListAdapter()
         listView.adapter = adapter
         viewModel.listState.observe(viewLifecycleOwner) { uiState ->
             when (uiState) {
