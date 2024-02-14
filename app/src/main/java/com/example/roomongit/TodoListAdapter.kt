@@ -3,7 +3,10 @@ package com.example.roomongit
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.roomongit.db.Todo
 
@@ -19,11 +22,18 @@ class EmployeeListAdapter(var items:List<Todo> = emptyList()): RecyclerView.Adap
     override fun getItemCount(): Int = items.size
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         holder.name.text = items[position].task
-        holder.position.text = items[position].progress
+        holder.progress.text = items[position].progress
+        holder.rootLayout.setOnClickListener {
+            holder.image.setImageResource(R.mipmap.todocheck)
+            //val resId:Int = items[position].image.get
+            //Toast.makeText(holder.itemView.context, "$items[position].task", Toast.LENGTH_LONG).show()
+        }
     }
 }
 
 class TodoViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
     val name: TextView = itemView.findViewById(R.id.task)
-    val position: TextView = itemView.findViewById(R.id.progress)
+    val progress: TextView = itemView.findViewById(R.id.progress)
+    val rootLayout:ConstraintLayout = itemView.findViewById(R.id.rootLayout)
+    val image:ImageView = itemView.findViewById(R.id.photo)
 }
