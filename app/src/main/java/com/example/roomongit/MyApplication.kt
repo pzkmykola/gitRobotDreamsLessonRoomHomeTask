@@ -10,7 +10,9 @@ class MyApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        val dbnew = Room.databaseBuilder(this, TodoDatabase::class.java, "todo_database").build()
+        val dbnew = Room.databaseBuilder(this, TodoDatabase::class.java, "todo_database")
+            .addMigrations(TodoDatabase.MIGRATION_1_2)
+            .build()
         repo = TodoRepository(dbnew)
     }
 
