@@ -1,4 +1,7 @@
 package com.example.roomongit.selectionmanager
 
-class ChangeDataSourcerMode {
+enum class ChangeDataSourceMode {
+    ClearAllSelection,
+    HoldSelectedPositions,
+    HoldSelectedItems
 }

@@ -1,4 +1,5 @@
 package com.example.roomongit.selectionmanager
 
-class Disposable {
+interface Disposable {
+    fun dispose()
 }

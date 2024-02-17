@@ -1,4 +1,5 @@
 package com.example.roomongit.selectionmanager
 
-class InterceptableSelectionManager {
+interface InterceptableSelectionManager : SelectionManager {
+    fun addSelectionInterceptor(interceptor: (position: Int, isSelected: Boolean, callback: () -> Unit) -> Unit): Disposable
 }

@@ -1,4 +1,5 @@
 package com.example.roomongit.selectionmanager
 
-class EmptyDisposable {
+class EmptyDisposable : Disposable {
+    override fun dispose() { }
 }
