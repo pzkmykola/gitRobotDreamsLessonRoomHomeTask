@@ -3,6 +3,7 @@ package com.example.roomongit
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -25,11 +26,20 @@ class TodoListAdapter(var items:List<TodoNew> = emptyList()): RecyclerView.Adapt
         holder.note.text = items[position].note
         holder.date.text = items[position].date
         holder.rootLayout.setOnClickListener {
-            Toast.makeText(
+            if (!holder.checkbox.isChecked) {
+                holder.image.setImageResource(R.mipmap.todocheck)
+                holder.checkbox.isChecked = true
+                //holder.itemView.setTag(1)
+            } else {
+                holder.image.setImageResource(R.drawable.todo_list_hand_icon)
+                holder.checkbox.isChecked = false
+                //holder.itemView.setTag(2)
+            }
+            /*Toast.makeText(
                 holder.itemView.context,
-                "${items[position].title} checked with ${items[position].date}",
+                "${items[position].task} check is ${holder.itemView.tag}",
                 Toast.LENGTH_SHORT
-            ).show()
+            ).show()*/
         }
     }
 }
@@ -39,5 +49,6 @@ class TodoViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
     val note: TextView = itemView.findViewById(R.id.note)
     val date: TextView = itemView.findViewById(R.id.date)
     val rootLayout: ConstraintLayout = itemView.findViewById(R.id.rootLayout)
+    val checkbox: CheckBox = itemView.findViewById(R.id.checkBox)
     val image: ImageView = itemView.findViewById(R.id.photo)
 }
