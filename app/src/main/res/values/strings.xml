@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RoomOnGit</string>
+    <string name="name_of_db_shared_prefs">MySharedPrefsForTodo</string>
 </resources>
