@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.example.roomongit.db.Todo
+import com.example.roomongit.dbnew.Todo
 
 class TodoViewModel: ViewModel() {
     private val repo = MyApplication.getApp().repo
@@ -16,8 +16,8 @@ class TodoViewModel: ViewModel() {
     init {
         repo.getAll().observeForever(observer)
     }
-    fun addTodo(task:String, progress:String){
-        repo.add(Todo(task = task, progress = progress))
+    fun addTodo(title:String, note:String, date:String){
+        repo.add(Todo(title = title, note = note, date = date))
     }
     fun removeTodo(todo: Todo){
         repo.remove(todo)

@@ -23,13 +23,15 @@ class AddTodoFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
-        val naneInputField:EditText = view.findViewById(R.id.taskInputField)
-        val positionInputField:EditText = view.findViewById(R.id.progressInputField)
-        val addButton : Button = view.findViewById(R.id.addButton)
+        val titleInputField:EditText = view.findViewById(R.id.titleInputField)
+        val noteInputField:EditText = view.findViewById(R.id.noteInputField)
+        val dateInputField:EditText = view.findViewById(R.id.dateInputField)
+        val addButton:Button = view.findViewById(R.id.addButton)
         addButton.setOnClickListener {
-            val task = naneInputField.text.toString()
-            val progress = positionInputField.text.toString()
-            viewModel.addTodo(task, progress)
+            val title = titleInputField.text.toString()
+            val note = noteInputField.text.toString()
+            val date = dateInputField.text.toString()
+            viewModel.addTodo(title, note, date)
             parentFragmentManager.popBackStack()
         }
     }
