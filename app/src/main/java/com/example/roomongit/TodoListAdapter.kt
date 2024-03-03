@@ -9,14 +9,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.example.roomongit.dbnew.TodoNew
+import com.example.roomongit.dbnew.TodoFB
 
-class TodoListAdapter(var items:List<TodoNew> = emptyList()): RecyclerView.Adapter<TodoViewHolder>() {
+class TodoListAdapter(var items:List<TodoFB> = emptyList()): RecyclerView.Adapter<TodoViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
         val listItemView = LayoutInflater.from(parent.context).inflate(R.layout.list_item_layout, parent, false)
         return TodoViewHolder(listItemView)
     }
-    fun updateItems(itemsToUpdate:List<TodoNew>){
+    fun updateItems(itemsToUpdate:List<TodoFB>){
         items = itemsToUpdate
         notifyDataSetChanged()
     }

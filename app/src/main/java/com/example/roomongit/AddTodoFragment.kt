@@ -22,7 +22,7 @@ class AddTodoFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
+        viewModel = ViewModelProvider(this)[TodoViewModel::class.java]
         val titleInputField:EditText = view.findViewById(R.id.titleInputField)
         val noteInputField:EditText = view.findViewById(R.id.noteInputField)
         val dateInputField:EditText = view.findViewById(R.id.dateInputField)
