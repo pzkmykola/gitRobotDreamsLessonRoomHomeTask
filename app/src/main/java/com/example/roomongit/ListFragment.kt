@@ -22,7 +22,7 @@ class ListFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(TodoViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[TodoViewModel::class.java]
         val listView: RecyclerView = view.findViewById(R.id.list)
         val fab: FloatingActionButton = view.findViewById(R.id.fabButton)
         listView.layoutManager = LinearLayoutManager(requireContext())
