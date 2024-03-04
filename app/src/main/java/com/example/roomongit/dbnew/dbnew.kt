@@ -12,34 +12,23 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-
 @Entity
-data class Todo (@PrimaryKey(autoGenerate = true) val id:Int? = null, val task:String, val progress: String)
-@Entity
-data class TodoNew (@PrimaryKey(autoGenerate = true) val id:Int? = null, val title:String, val note: String, val date: String )
+data class TodoFB (@PrimaryKey(autoGenerate = true) val id:Int? = null, val title:String, val note: String, val date: String )
 
 @Dao
 interface TodoDao {
 
     @Insert
-    fun add(todoNew: TodoNew)
+    fun add(todo: TodoFB)
 
     @Delete
-    fun delete(todoNew: TodoNew)
+    fun delete(todo: TodoFB)
 
-    @Query("SELECT * FROM todoNew")
-    fun getAll(): LiveData<List<TodoNew>>
+    @Query("SELECT * FROM todoFB")
+    fun getAll(): LiveData<List<TodoFB>>
 }
 
-@Database(entities = [Todo::class,TodoNew::class], version = 2)
+@Database(entities = [TodoFB::class], version = 2)
 abstract class TodoDatabase: RoomDatabase(){
     abstract fun todoDao():TodoDao
-    companion object{
-        val MIGRATION_1_2 = object: Migration(1,2){
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `todo` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `task` TEXT NOT NULL, `progress` TEXT NOT NULL)")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `todoNew` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT NOT NULL, `note` TEXT NOT NULL, `date` TEXT NOT NULL)")
-            }
-        }
-    }
 }
