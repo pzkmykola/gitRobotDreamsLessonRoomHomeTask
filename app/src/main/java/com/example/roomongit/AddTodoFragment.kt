@@ -4,14 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.roomongit.databinding.InputFragmentLayoutBinding
 import com.example.roomongit.dbnew.TodoFB
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.datepicker.MaterialDatePicker
 
-class AddTodoFragment(private val todo: TodoFB? = null): Fragment() {
+class AddTodoFragment(private val todo: TodoFB? = null): BottomSheetDialogFragment() {
     private lateinit var viewModel: TodoViewModel
     private lateinit var binding:InputFragmentLayoutBinding
+    private var addTodoSuccess: Boolean = false
+    private var isValid = true
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -25,16 +29,29 @@ class AddTodoFragment(private val todo: TodoFB? = null): Fragment() {
         viewModel = ViewModelProvider(this)[TodoViewModel::class.java]
         binding = InputFragmentLayoutBinding.bind(view)
         todo?.let {
-            binding.titleInputField.setText(it.title)
-            binding.noteInputField.setText(it.note)
-            binding.dateInputField.setText(it.date)
+            binding.todoTitle.setText(it.title)
+            binding.todoDescription.setText(it.note)
+            binding.dateDropdown.setText(it.date)
         }
+        val datePicker =
+            MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Select date")
+                .build()
+        binding.dateDropdown.setOnClickListener {
+            datePicker.show(childFragmentManager, "DATE_PICKER")
+        }
+        datePicker.addOnPositiveButtonClickListener {
+            binding.dateDropdown.setText(datePicker.headerText)
+        }
+
         binding.addButton.setOnClickListener {
-            val title = binding.titleInputField.text.toString()
-            val note = binding.noteInputField.text.toString()
-            val date = binding.dateInputField.text.toString()
+            val title = binding.todoTitle.text.toString()
+            val note = binding.todoDescription.text.toString()
+            val date = binding.dateDropdown.text.toString()
             viewModel.addTodo(title, note, date)
-            parentFragmentManager.popBackStack()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, ListFragment())
+                .commit()
         }
     }
 }

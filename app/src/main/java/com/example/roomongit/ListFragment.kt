@@ -38,10 +38,8 @@ class ListFragment : Fragment() {
         }
 
         fab.setOnClickListener {
-            val fragment = AddTodoFragment()
             parentFragmentManager.beginTransaction()
-                .add(R.id.container, fragment)
-                .addToBackStack(fragment.javaClass.name)
+                .replace(R.id.container, AddTodoFragment())
                 .commit()
         }
 
