@@ -10,9 +10,13 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ListFragment : Fragment() {
-    private lateinit var viewModel: TodoViewModel
+    @Inject
+    lateinit var viewModel: TodoViewModel
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -22,7 +26,6 @@ class ListFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity())[TodoViewModel::class.java]
         val listView: RecyclerView = view.findViewById(R.id.list)
         val fab: FloatingActionButton = view.findViewById(R.id.fabButton)
         listView.layoutManager = LinearLayoutManager(requireContext())

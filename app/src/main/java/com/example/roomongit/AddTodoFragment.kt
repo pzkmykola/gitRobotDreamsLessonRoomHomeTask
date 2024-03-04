@@ -9,13 +9,18 @@ import com.example.roomongit.databinding.InputFragmentLayoutBinding
 import com.example.roomongit.dbnew.TodoFB
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AddTodoFragment(private val todo: TodoFB? = null): BottomSheetDialogFragment() {
-    private lateinit var viewModel: TodoViewModel
+    @Inject
+    lateinit var viewModel: TodoViewModel
+
     private lateinit var binding:InputFragmentLayoutBinding
     private var addTodoSuccess: Boolean = false
     private var isValid = true
-
+    //val viewModel: TodoViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -26,7 +31,6 @@ class AddTodoFragment(private val todo: TodoFB? = null): BottomSheetDialogFragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[TodoViewModel::class.java]
         binding = InputFragmentLayoutBinding.bind(view)
         todo?.let {
             binding.todoTitle.setText(it.title)

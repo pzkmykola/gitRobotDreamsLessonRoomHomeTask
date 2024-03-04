@@ -11,8 +11,6 @@ import com.example.roomongit.dbnew.TodoFB
 class TodoListAdapter(var items:List<TodoFB> = emptyList()): RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
         val view = ListItemLayoutBinding.inflate(LayoutInflater.from(parent.context),parent, false)
-        //val listItemView = LayoutInflater.from(parent.context).inflate(R.layout.list_item_layout, parent, false)
-        //return TodoViewHolder(listItemView)
         return TodoViewHolder(view)
     }
     @SuppressLint("NotifyDataSetChanged")
