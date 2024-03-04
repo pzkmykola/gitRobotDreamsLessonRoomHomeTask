@@ -11,7 +11,6 @@ import javax.inject.Singleton
 
 @Singleton
 class TodoViewModel  @Inject constructor (private var repo:TodoRepository): ViewModel() {
-    //private val repo = MyApplication.getApp().repo
     private val _listState = MutableLiveData<ListState>(ListState.EmptyList)
     val listState: LiveData<ListState> = _listState
     private val observer = Observer<List<TodoFB>> {
