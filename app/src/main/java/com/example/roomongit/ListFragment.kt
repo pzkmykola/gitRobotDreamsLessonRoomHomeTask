@@ -10,9 +10,14 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ListFragment : Fragment() {
-    private lateinit var viewModel: TodoViewModel
+    @Inject
+    lateinit var viewModel: TodoViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,7 +64,7 @@ class ListFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 if (direction == ItemTouchHelper.END) {
-                    viewModel.removeTodo(adapter.items[viewHolder.adapterPosition])
+                    viewModel.deleteTodo(adapter.items[viewHolder.adapterPosition])
                 }
             }
         })

@@ -3,6 +3,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     id ("com.google.gms.google-services")
+    id("kotlin-parcelize")
+    id("org.jetbrains.kotlin.kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -35,6 +38,8 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    viewBinding { enable = true }
 }
 
 dependencies {
@@ -45,10 +50,11 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     //database
-    implementation("androidx.room:room-runtime:2.5.2")
+    implementation("androidx.room:room-runtime:2.6.1")
     implementation("com.google.firebase:firebase-database:20.3.1")
-    annotationProcessor("androidx.room:room-compiler:2.5.2")
-    ksp("androidx.room:room-compiler:2.5.2")
+    implementation("com.google.firebase:firebase-firestore-ktx:24.10.3")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 
     //firebase
     implementation (platform("com.google.firebase:firebase-bom:32.7.3"))
@@ -58,7 +64,15 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
 
+    //hilt
+    implementation ("com.google.dagger:hilt-android:2.50")
+    kapt ("com.google.dagger:hilt-compiler:2.50")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+}
+
+kapt{
+    correctErrorTypes = true
 }
