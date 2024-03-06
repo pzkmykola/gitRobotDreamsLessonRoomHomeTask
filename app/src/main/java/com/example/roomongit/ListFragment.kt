@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +16,6 @@ import javax.inject.Inject
 class ListFragment : Fragment() {
     @Inject
     lateinit var viewModel: TodoViewModel
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -27,7 +25,6 @@ class ListFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(TodoViewModel::class.java)
         val listView: RecyclerView = view.findViewById(R.id.list)
         val fab: FloatingActionButton = view.findViewById(R.id.fabButton)
         listView.layoutManager = LinearLayoutManager(requireContext())
@@ -43,10 +40,8 @@ class ListFragment : Fragment() {
         }
 
         fab.setOnClickListener {
-            val fragment = AddTodoFragment()
             parentFragmentManager.beginTransaction()
-                .add(R.id.container, fragment)
-                .addToBackStack(fragment.javaClass.name)
+                .replace(R.id.container, AddTodoFragment())
                 .commit()
         }
 
@@ -64,7 +59,7 @@ class ListFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 if (direction == ItemTouchHelper.END) {
-                    viewModel.deleteTodo(adapter.items[viewHolder.adapterPosition])
+                    viewModel.removeTodo(adapter.items[viewHolder.adapterPosition])
                 }
             }
         })

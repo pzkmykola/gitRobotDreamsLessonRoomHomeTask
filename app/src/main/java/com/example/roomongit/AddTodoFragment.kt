@@ -5,10 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.roomongit.databinding.InputFragmentLayoutBinding
 import com.example.roomongit.dbnew.TodoFB
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -56,18 +52,11 @@ class AddTodoFragment(private val todo: TodoFB? = null): BottomSheetDialogFragme
             val title = binding.todoTitle.text.toString()
             val note = binding.todoDescription.text.toString()
             val date = binding.dateDropdown.text.toString()
-            val completed:Boolean = false
-
             if(title == "" || note == "" || date == "") {
                 snackbar("Some fields are empty, please try again")
             }
             else {
-                val todo = TodoFB(title = title, note = note, date = date, completed = completed)
-                if (todo.id == "") {
-                    viewModel.addTodo(todo)
-                } else {
-                    viewModel.updateTodo(todo)
-                }
+                viewModel.addTodo(title, note, date)
                 snackbar("Task updated successfully")
                 closeFunction?.invoke(true)
                 this.dismiss()

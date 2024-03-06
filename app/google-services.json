@@ -13,7 +13,28 @@
           "package_name": "com.example.roomongit"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "878710138401-9bsh483mrmaj7n6dbba5l5l2em9oj80v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.roomongit",
+            "certificate_hash": "c4bef2df80d560d229f597208207533ccc0008e6"
+          }
+        },
+        {
+          "client_id": "878710138401-k6fjj920tqa7b2ovqnp7qv3dqkppcmb9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.roomongit",
+            "certificate_hash": "0de19755cdb7aee260d2ad35aaf5bd2ca57fad4c"
+          }
+        },
+        {
+          "client_id": "878710138401-i9fupgge3m5un1fv5d5tk43dthlp5tbo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC-12bFp9AOSyMsxI9UHZbsdzE0a8Y12nI"
@@ -21,7 +42,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "878710138401-i9fupgge3m5un1fv5d5tk43dthlp5tbo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
