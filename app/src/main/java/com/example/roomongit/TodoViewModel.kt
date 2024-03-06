@@ -19,8 +19,8 @@ class TodoViewModel  @Inject constructor (private var repo:TodoRepository): View
     init {
         repo.getAll().observeForever(observer)
     }
-    fun addTodo(title:String, note:String, date:String){
-        repo.add(TodoFB(title = title, note = note, date = date))
+    fun addTodo(title:String, note:String, date:String, completed:Boolean){
+        repo.add(TodoFB(title = title, note = note, date = date, completed = completed))
     }
     fun removeTodo(todo: TodoFB){
         repo.remove(todo)

@@ -52,11 +52,12 @@ class AddTodoFragment(private val todo: TodoFB? = null): BottomSheetDialogFragme
             val title = binding.todoTitle.text.toString()
             val note = binding.todoDescription.text.toString()
             val date = binding.dateDropdown.text.toString()
+            val completed:Boolean = false
             if(title == "" || note == "" || date == "") {
                 snackbar("Some fields are empty, please try again")
             }
             else {
-                viewModel.addTodo(title, note, date)
+                viewModel.addTodo(title, note, date, completed)
                 snackbar("Task updated successfully")
                 closeFunction?.invoke(true)
                 this.dismiss()

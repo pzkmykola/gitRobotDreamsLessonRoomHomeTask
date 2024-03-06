@@ -13,7 +13,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Entity
-data class TodoFB (@PrimaryKey(autoGenerate = true) val id:Int? = null, val title:String, val note: String, val date: String )
+data class TodoFB (@PrimaryKey(autoGenerate = true) val id:Int? = null, val title:String, val note: String, val date: String , val completed: Boolean = false)
 
 @Dao
 interface TodoDao {
@@ -28,7 +28,7 @@ interface TodoDao {
     fun getAll(): LiveData<List<TodoFB>>
 }
 
-@Database(entities = [TodoFB::class], version = 2)
+@Database(entities = [TodoFB::class], version = 3)
 abstract class TodoDatabase: RoomDatabase(){
     abstract fun todoDao():TodoDao
 }

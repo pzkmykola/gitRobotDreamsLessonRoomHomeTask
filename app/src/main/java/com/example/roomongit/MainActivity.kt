@@ -55,7 +55,3 @@ interface OnAuthLaunch {
     fun launch(intent: Intent)
     fun showListFragment()
 }
-
-//interface onAddClickListener{
-//    fun onFabClick()
-//}

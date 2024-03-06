@@ -30,6 +30,7 @@ class TodoListAdapter(var items:List<TodoFB> = emptyList()): RecyclerView.Adapte
             binding.title.text = todo.title
             binding.note.text = todo.note
             binding.date.text = todo.date
+            binding.checkBox.isChecked = todo.completed
             binding.rootLayout.setOnClickListener {
                 if (!binding.checkBox.isChecked) {
                     binding.checkBox.isChecked = true
@@ -42,6 +43,7 @@ class TodoListAdapter(var items:List<TodoFB> = emptyList()): RecyclerView.Adapte
                         image.setImageResource(R.drawable.todo_list_hand_icon)
                     }
                 }
+                todo.completed.also { binding.checkBox.isChecked = it }
             }
         }
     }
