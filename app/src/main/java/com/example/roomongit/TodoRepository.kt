@@ -2,8 +2,10 @@ package com.example.roomongit
 
 import android.util.Log
 import com.example.roomongit.dbnew.TodoFB
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-
+import com.google.firebase.database.ValueEventListener
 
 
 class TodoRepository(private val database: DatabaseReference)  {
@@ -39,6 +41,33 @@ class TodoRepository(private val database: DatabaseReference)  {
                 }
             }
         }
+    }
+
+    fun getAll() {
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val todoList = mutableListOf<TodoFB>()
+                if (snapshot.exists()) {
+                    snapshot.children.forEach {
+                        val taskKey: String = it.key!!
+                        if (taskKey != "") {
+                            val newItem = it.getValue(TodoFB::class.java)
+                            if (newItem != null && taskKey == newItem.id) {
+                                Log.d(
+                                    "MYRES1",
+                                    "${newItem.id}/${newItem.title}/${newItem.note}/${newItem.date}"
+                                )
+                                todoList.add(newItem)
+                            }
+                        }
+                    }
+                    val adapter = TodoListAdapter(todoList)
+                    adapter.updateItems(todoList)
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
     }
 }
 
