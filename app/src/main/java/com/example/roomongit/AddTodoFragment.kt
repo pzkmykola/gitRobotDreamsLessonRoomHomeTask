@@ -10,16 +10,17 @@ import com.example.roomongit.dbnew.TodoFB
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
-@AndroidEntryPoint
+
 class AddTodoFragment(private var todo: TodoFB? = null): BottomSheetDialogFragment() {
-    @Inject
-    lateinit var viewModel: TodoViewModel
+    //    @Inject
+//    lateinit var viewModel: TodoViewModel
+    private val target = MyApplication.getApp().target
     private lateinit var binding:InputFragmentLayoutBinding
     private var closeFunction: ((Boolean) -> Unit)? = null
     private var addTodoSuccess: Boolean = false
+
+    private val repo = MyApplication.getApp().repo
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +31,7 @@ class AddTodoFragment(private var todo: TodoFB? = null): BottomSheetDialogFragme
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         super.onViewCreated(view, savedInstanceState)
         binding = InputFragmentLayoutBinding.bind(view)
         todo?.let {
@@ -49,21 +51,24 @@ class AddTodoFragment(private var todo: TodoFB? = null): BottomSheetDialogFragme
         }
 
         binding.addButton.setOnClickListener {
-            val title = binding.todoTitle.text.toString()
-            val note = binding.todoDescription.text.toString()
+            val title = binding.todoTitle.text?.toString()
+            val note = binding.todoDescription.text?.toString()
             val date = binding.dateDropdown.text.toString()
-            val completed:Boolean = false
+
             if(title == "" || note == "" || date == "") {
                 snackbar("Some fields are empty, please try again")
             }
             else {
-                viewModel.addTodo(title, note, date, completed)
-                snackbar("Task updated successfully")
-                closeFunction?.invoke(true)
-                this.dismiss()
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.container, ListFragment())
-                    .commit()
+                if(repo.add(title, note, date)){
+                    snackbar("Task updated successfully")
+                    closeFunction?.invoke(true)
+                    this.dismiss()
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.container, ListFragment())
+                        .commit()
+                } else{
+                    snackbar("Something is wrong, try again!!!")
+                }
             }
         }
     }
@@ -75,5 +80,19 @@ class AddTodoFragment(private var todo: TodoFB? = null): BottomSheetDialogFragme
 
     private fun snackbar(msg: String){
         Snackbar.make(requireActivity().findViewById(R.id.frameLayoutAddTodo),msg, Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun add(title:String?, note:String?, date:String):Boolean {
+        var ret = true
+        val userId = target.push().key
+        if (userId == null) {
+            ret = false
+        }else {
+            val todoNew = TodoFB(id = userId, title = title ?: "", note = note ?: "", date = date)
+            target.child(todoNew.id).setValue(todoNew).addOnCompleteListener {
+                if(!it.isSuccessful) ret = false
+            }
+        }
+        return ret
     }
 }
