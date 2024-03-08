@@ -25,8 +25,8 @@ class ListFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val listView: RecyclerView = view.findViewById(R.id.list)
         val fab: FloatingActionButton = view.findViewById(R.id.fabButton)
+        val listView: RecyclerView = view.findViewById(R.id.list)
         listView.layoutManager = LinearLayoutManager(requireContext())
         val adapter = TodoListAdapter()
         listView.adapter = adapter

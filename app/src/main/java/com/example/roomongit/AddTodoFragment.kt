@@ -14,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddTodoFragment(private val todo: TodoFB? = null): BottomSheetDialogFragment() {
+class AddTodoFragment(private var todo: TodoFB? = null): BottomSheetDialogFragment() {
     @Inject
     lateinit var viewModel: TodoViewModel
     private lateinit var binding:InputFragmentLayoutBinding

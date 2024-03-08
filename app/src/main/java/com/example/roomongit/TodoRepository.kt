@@ -1,20 +1,44 @@
 package com.example.roomongit
 
-import com.example.roomongit.dbnew.TodoDatabase
+import android.util.Log
 import com.example.roomongit.dbnew.TodoFB
-import java.util.concurrent.Executors
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.google.firebase.database.DatabaseReference
 
-@Singleton
-class TodoRepository @Inject constructor (private val database: TodoDatabase) {
-    private val executor = Executors.newSingleThreadExecutor()
-    fun getAll() = database.todoDao().getAll()
-    fun add(todo: TodoFB) {
-        executor.execute { database.todoDao().add(todo) }
+
+
+class TodoRepository(private val database: DatabaseReference)  {
+    fun add(title:String?, note:String?, date:String):Boolean {
+        var ret = true
+        val userId = database.push().key
+        if (userId == null) {
+            ret = false
+        }else {
+            val todoNew = TodoFB(id = userId, title = title ?: "", note = note ?: "", date = date)
+            database.child(todoNew.id).setValue(todoNew).addOnCompleteListener {
+                if(!it.isSuccessful) ret = false
+            }
+        }
+        return ret
     }
-    fun remove(todo: TodoFB){
-        executor.execute { database.todoDao().delete(todo) }
+
+    fun remove (todo: TodoFB) {
+        val userId = todo.id
+        database.get().addOnCompleteListener {task ->
+            if (task.isSuccessful) {
+                task.result.children.forEach {
+                    val newItem = it.key
+                    if ( newItem != null && userId == newItem) {
+                        database.child(todo.id).removeValue().addOnSuccessListener {
+                            Log.d(
+                                "MYRES2",
+                                "Field with id = $userId removed!!!"
+                            )
+                            return@addOnSuccessListener
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
