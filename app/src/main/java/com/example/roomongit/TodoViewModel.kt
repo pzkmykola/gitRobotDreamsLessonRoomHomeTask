@@ -4,9 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import com.example.roomongit.dbnew.TodoDao
 import com.example.roomongit.dbnew.TodoFB
 
-class TodoViewModel : ViewModel() {
+class TodoViewModel : ViewModel(), TodoDao {
     private val repo = MyApplication.getApp().repo
     private val _listState = MutableLiveData<ListState>(ListState.EmptyList)
     val listState: LiveData<ListState> = _listState
@@ -15,13 +16,17 @@ class TodoViewModel : ViewModel() {
     }
 
     init {
-        repo.getAll()
+        this.getAll().observeForever(observer)
     }
-    fun add(title: String, note: String, date:String):Boolean{
+    override fun add(title: String, note: String, date:String):Boolean{
         return repo.add(title = title , note = note, date = date)
     }
-    fun remove(todo: TodoFB){
+    override fun remove(todo: TodoFB){
         repo.remove(todo)
+    }
+
+    override fun getAll(): LiveData<List<TodoFB>>{
+        return repo.getAll() as LiveData<List<TodoFB>>
     }
 
     sealed class ListState {

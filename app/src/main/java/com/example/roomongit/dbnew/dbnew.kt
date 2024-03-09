@@ -15,7 +15,7 @@ data class TodoFB (
 //@Dao
 interface TodoDao {
     //@Insert
-    fun add(todo: TodoFB)
+    fun add(title: String, note: String, date:String):Boolean
     //@Delete
     fun remove(todo: TodoFB)
 

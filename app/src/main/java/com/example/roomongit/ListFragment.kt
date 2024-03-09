@@ -1,7 +1,6 @@
 package com.example.roomongit
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,16 +10,12 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.example.roomongit.dbnew.TodoFB
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 
 class ListFragment : Fragment() {
     private lateinit var  listView: RecyclerView
     private lateinit var adapter: TodoListAdapter
     private lateinit var viewModel: TodoViewModel
-    private val target = MyApplication.getApp().target
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,14 +32,14 @@ class ListFragment : Fragment() {
         listView.layoutManager = LinearLayoutManager(requireContext())
         adapter = TodoListAdapter()
         listView.adapter = adapter
-//        viewModel.listState.observe(viewLifecycleOwner) { uiState ->
-//            when (uiState) {
-//                is TodoViewModel.ListState.EmptyList -> Unit
-//                is TodoViewModel.ListState.UpdatedList -> {
-//                    adapter.updateItems(uiState.list)
-//                }
-//            }
-//        }
+        viewModel.listState.observe(viewLifecycleOwner) { uiState ->
+            when (uiState) {
+                is TodoViewModel.ListState.EmptyList -> Unit
+                is TodoViewModel.ListState.UpdatedList -> {
+                    adapter.updateItems(uiState.list)
+                }
+            }
+        }
 
         fab.setOnClickListener {
             val activity = requireActivity() as OnAddClickListener
@@ -54,30 +49,30 @@ class ListFragment : Fragment() {
                 .commit()
         }
 
-        target.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val todoList = mutableListOf<TodoFB>()
-                if (snapshot.exists()) {
-                    snapshot.children.forEach {
-                        val taskKey: String = it.key!!
-                        if (taskKey != "") {
-                            val newItem = it.getValue(TodoFB::class.java)
-                            if (newItem != null && taskKey == newItem.id) {
-                                Log.d(
-                                    "MYRES1",
-                                    "${newItem.id}/${newItem.title}/${newItem.note}/${newItem.date}"
-                                )
-                                todoList.add(newItem)
-                            }
-                        }
-                    }
-                    adapter = TodoListAdapter(todoList)
-                    listView.adapter = adapter
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-            }
-        })
+//        target.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val todoList = mutableListOf<TodoFB>()
+//                if (snapshot.exists()) {
+//                    snapshot.children.forEach {
+//                        val taskKey: String = it.key!!
+//                        if (taskKey != "") {
+//                            val newItem = it.getValue(TodoFB::class.java)
+//                            if (newItem != null && taskKey == newItem.id) {
+//                                Log.d(
+//                                    "MYRES1",
+//                                    "${newItem.id}/${newItem.title}/${newItem.note}/${newItem.date}"
+//                                )
+//                                todoList.add(newItem)
+//                            }
+//                        }
+//                    }
+//                    adapter = TodoListAdapter(todoList)
+//                    listView.adapter = adapter
+//                }
+//            }
+//            override fun onCancelled(error: DatabaseError) {
+//            }
+//        })
 
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
             override fun getMovementFlags(

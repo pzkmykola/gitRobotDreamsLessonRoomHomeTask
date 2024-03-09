@@ -9,12 +9,13 @@ import com.google.firebase.database.ValueEventListener
 
 
 class TodoRepository(private val database: DatabaseReference)  {
-    fun add(title:String?, note:String?, date:String):Boolean {
+    //private val executor = Executors.newSingleThreadExecutor()
+    fun add(title:String, note:String, date:String):Boolean {
         var ret = true
         val userId = database.push().key
         if (userId == null) {
             ret = false
-        }else {
+        } else {
             val todoNew = TodoFB(id = userId, title = title ?: "", note = note ?: "", date = date)
             database.child(todoNew.id).setValue(todoNew).addOnCompleteListener {
                 if(!it.isSuccessful) ret = false
@@ -43,10 +44,11 @@ class TodoRepository(private val database: DatabaseReference)  {
         }
     }
 
-    fun getAll() {
+    fun getAll(): MutableList<TodoFB> {
+        val todoList = mutableListOf<TodoFB>()
+        //val todoList = mutableListOf<LiveData<TodoFB>>()
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val todoList = mutableListOf<TodoFB>()
                 if (snapshot.exists()) {
                     snapshot.children.forEach {
                         val taskKey: String = it.key!!
@@ -61,13 +63,12 @@ class TodoRepository(private val database: DatabaseReference)  {
                             }
                         }
                     }
-                    val adapter = TodoListAdapter(todoList)
-                    adapter.updateItems(todoList)
                 }
             }
             override fun onCancelled(error: DatabaseError) {
             }
         })
+        return todoList
     }
 }
 
