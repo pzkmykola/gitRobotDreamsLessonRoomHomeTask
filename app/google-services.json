@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "878710138401",
+    "firebase_url": "https://roomongit-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "roomongit",
+    "storage_bucket": "roomongit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878710138401:android:a9ff939621ab609b6c6560",
+        "android_client_info": {
+          "package_name": "com.example.roomongit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "878710138401-k6fjj920tqa7b2ovqnp7qv3dqkppcmb9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.roomongit",
+            "certificate_hash": "0de19755cdb7aee260d2ad35aaf5bd2ca57fad4c"
+          }
+        },
+        {
+          "client_id": "878710138401-i9fupgge3m5un1fv5d5tk43dthlp5tbo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-12bFp9AOSyMsxI9UHZbsdzE0a8Y12nI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "878710138401-i9fupgge3m5un1fv5d5tk43dthlp5tbo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
