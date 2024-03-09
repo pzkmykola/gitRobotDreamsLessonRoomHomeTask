@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,12 +17,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
 class ListFragment : Fragment() {
-    private val target = MyApplication.getApp().target
     private lateinit var  listView: RecyclerView
     private lateinit var adapter: TodoListAdapter
-
-    private val repo = MyApplication.getApp().repo
-
+    private lateinit var viewModel: TodoViewModel
+    private val target = MyApplication.getApp().target
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,10 +32,20 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fab: FloatingActionButton = view.findViewById(R.id.fabButton)
+        viewModel = ViewModelProvider(this@ListFragment)[TodoViewModel::class.java]
         listView = view.findViewById(R.id.list)
         listView.layoutManager = LinearLayoutManager(requireContext())
-//        adapter = TodoListAdapter()
-//        listView.adapter = adapter
+        adapter = TodoListAdapter()
+        listView.adapter = adapter
+//        viewModel.listState.observe(viewLifecycleOwner) { uiState ->
+//            when (uiState) {
+//                is TodoViewModel.ListState.EmptyList -> Unit
+//                is TodoViewModel.ListState.UpdatedList -> {
+//                    adapter.updateItems(uiState.list)
+//                }
+//            }
+//        }
+
         fab.setOnClickListener {
             val activity = requireActivity() as OnAddClickListener
             activity.onFabClick()
@@ -45,7 +54,6 @@ class ListFragment : Fragment() {
                 .commit()
         }
 
-//        repo.getAll()
         target.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val todoList = mutableListOf<TodoFB>()
@@ -63,9 +71,8 @@ class ListFragment : Fragment() {
                             }
                         }
                     }
-                    updateViewAdapter(todoList)
-//                    adapter = TodoListAdapter(todoList)
-//                    listView.adapter = adapter
+                    adapter = TodoListAdapter(todoList)
+                    listView.adapter = adapter
                 }
             }
             override fun onCancelled(error: DatabaseError) {
@@ -86,15 +93,10 @@ class ListFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 if (direction == ItemTouchHelper.END) {
-                    repo.remove(adapter.items[viewHolder.adapterPosition])
+                    viewModel.remove(adapter.items[viewHolder.adapterPosition])
                 }
             }
         })
         itemTouchHelper.attachToRecyclerView(listView)
-    }
-
-    private fun updateViewAdapter(list:MutableList<TodoFB>){
-        adapter = TodoListAdapter(list)
-        listView.adapter = adapter
     }
 }
