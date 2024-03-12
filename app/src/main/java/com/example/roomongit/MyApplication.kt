@@ -7,7 +7,7 @@ import com.google.firebase.database.FirebaseDatabase
 
 class MyApplication: Application() {
     lateinit var target:DatabaseReference
-    lateinit var repo:TodoRepository
+    lateinit var repo:PlaceRepository
 
     override fun onCreate() {
         super.onCreate()
@@ -21,7 +21,7 @@ class MyApplication: Application() {
         target = database.reference
             .child(account?.id ?: "unknown_account").child("Todo")
 
-        repo = TodoRepository(target)
+        repo = PlaceRepository(target)
     }
     companion object {
         private lateinit var instance:MyApplication

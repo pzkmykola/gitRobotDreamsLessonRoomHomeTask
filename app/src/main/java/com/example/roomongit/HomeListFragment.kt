@@ -11,15 +11,15 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.example.roomongit.dbnew.TodoFB
+import com.example.roomongit.dbnew.PlaceFB
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
-class ListFragment : Fragment() {
+class HomeListFragment : Fragment() {
     private lateinit var  listView: RecyclerView
-    private lateinit var adapter: TodoListAdapter
-    private lateinit var viewModel: TodoViewModel
+    private lateinit var adapter: PlaceListAdapter
+    private lateinit var viewModel: PlaceViewModel
     private val target = MyApplication.getApp().target
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,38 +32,38 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fab: FloatingActionButton = view.findViewById(R.id.fabButton)
-        viewModel = ViewModelProvider(this@ListFragment)[TodoViewModel::class.java]
+        viewModel = ViewModelProvider(this@HomeListFragment)[PlaceViewModel::class.java]
         listView = view.findViewById(R.id.list)
         listView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = TodoListAdapter()
+        adapter = PlaceListAdapter()
         listView.adapter = adapter
 
         fab.setOnClickListener {
             val activity = requireActivity() as OnAddClickListener
             activity.onFabClick()
             parentFragmentManager.beginTransaction()
-                .replace(R.id.container, AddTodoFragment())
+                .replace(R.id.container, AddPlaceFragment())
                 .commit()
         }
 
         target.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val todoList = mutableListOf<TodoFB>()
+                val todoList = mutableListOf<PlaceFB>()
                 if (snapshot.exists()) {
                     snapshot.children.forEach {
                         val taskKey: String = it.key!!
                         if (taskKey != "") {
-                            val newItem = it.getValue(TodoFB::class.java)
+                            val newItem = it.getValue(PlaceFB::class.java)
                             if (newItem != null && taskKey == newItem.id) {
                                 Log.d(
                                     "MYRES1",
-                                    "${newItem.id}/${newItem.title}/${newItem.note}/${newItem.date}"
+                                    "${newItem.id}/${newItem.title}/${newItem.location}/${newItem.urlImage}"
                                 )
                                 todoList.add(newItem)
                             }
                         }
                     }
-                    adapter = TodoListAdapter(todoList)
+                    adapter = PlaceListAdapter(todoList)
                     listView.adapter = adapter
                 }
             }

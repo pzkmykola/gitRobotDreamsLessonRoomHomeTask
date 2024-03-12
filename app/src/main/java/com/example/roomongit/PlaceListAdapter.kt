@@ -5,15 +5,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.roomongit.databinding.ListItemLayoutBinding
-import com.example.roomongit.dbnew.TodoFB
+import com.example.roomongit.dbnew.PlaceFB
 
-class TodoListAdapter(var items:List<TodoFB> = emptyList()): RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
+class PlaceListAdapter(var items:List<PlaceFB> = emptyList()): RecyclerView.Adapter<PlaceListAdapter.TodoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
         val view = ListItemLayoutBinding.inflate(LayoutInflater.from(parent.context),parent, false)
         return TodoViewHolder(view)
     }
-    fun updateItems(itemsToUpdate:List<TodoFB>){
+    fun updateItems(itemsToUpdate:List<PlaceFB>){
         items = itemsToUpdate
         notifyDataSetChanged()
     }
@@ -25,14 +25,14 @@ class TodoListAdapter(var items:List<TodoFB> = emptyList()): RecyclerView.Adapte
     }
     inner class TodoViewHolder(private val binding: ListItemLayoutBinding):RecyclerView.ViewHolder(binding.root) {
         private val image: ImageView = binding.photo
-        fun bind(todo: TodoFB) {
+        fun bind(todo: PlaceFB) {
             binding.title.text = todo.title
-            binding.note.text = todo.note
-            binding.date.text = todo.date
+            binding.note.text = todo.location
+            binding.date.text = todo.urlImage
             binding.rootLayout.setOnClickListener {
                 if (!binding.checkBox.isChecked) {
                     binding.checkBox.isChecked = true
-                    if(todo.note == "") todo.note = "completed"
+                    if(todo.location == "") todo.location = "completed"
                     binding.apply {
                         image.setImageResource(R.mipmap.todocheck)
                     }

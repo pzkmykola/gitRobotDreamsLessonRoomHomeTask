@@ -7,16 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.example.roomongit.databinding.InputFragmentLayoutBinding
-import com.example.roomongit.dbnew.TodoFB
+import com.example.roomongit.dbnew.PlaceFB
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 
-class AddTodoFragment(private var todo: TodoFB? = null): BottomSheetDialogFragment() {
+class AddPlaceFragment(private var todo: PlaceFB? = null): BottomSheetDialogFragment() {
     private lateinit var binding:InputFragmentLayoutBinding
     private var closeFunction: ((Boolean) -> Unit)? = null
     private var addTodoSuccess: Boolean = false
-    private lateinit var viewModel: TodoViewModel
+    private lateinit var viewModel: PlaceViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,12 +29,12 @@ class AddTodoFragment(private var todo: TodoFB? = null): BottomSheetDialogFragme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this@AddTodoFragment)[TodoViewModel::class.java]
+        viewModel = ViewModelProvider(this@AddPlaceFragment)[PlaceViewModel::class.java]
         binding = InputFragmentLayoutBinding.bind(view)
         todo?.let {
             binding.todoTitle.setText(it.title)
-            binding.todoDescription.setText(it.note)
-            binding.dateDropdown.setText(it.date)
+            binding.todoDescription.setText(it.location)
+            binding.dateDropdown.setText(it.urlImage)
         }
         val datePicker =
             MaterialDatePicker.Builder.datePicker()
@@ -63,7 +63,7 @@ class AddTodoFragment(private var todo: TodoFB? = null): BottomSheetDialogFragme
                     closeFunction?.invoke(true)
                     this.dismiss()
                     parentFragmentManager.beginTransaction()
-                        .replace(R.id.container, ListFragment())
+                        .replace(R.id.container, HomeListFragment())
                         .commit()
                 } else{
                     snackbar("Something is wrong, try again!!!")

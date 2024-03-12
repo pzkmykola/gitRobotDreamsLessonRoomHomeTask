@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch, OnAddClickListener {
     }
     override fun showListFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(com.google.android.material.R.id.container, ListFragment())
+            .replace(com.google.android.material.R.id.container, HomeListFragment())
             .commit()
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch, OnAddClickListener {
 
     override fun onFabClick() {
         supportFragmentManager.beginTransaction()
-            .add(com.google.android.material.R.id.container, AddTodoFragment())
+            .add(com.google.android.material.R.id.container, AddPlaceFragment())
             .addToBackStack("todoFragment")
             .commit()
     }
