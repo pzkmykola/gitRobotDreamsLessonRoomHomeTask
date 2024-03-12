@@ -37,14 +37,6 @@ class ListFragment : Fragment() {
         listView.layoutManager = LinearLayoutManager(requireContext())
         adapter = TodoListAdapter()
         listView.adapter = adapter
-//        viewModel.listState.observe(viewLifecycleOwner) { uiState ->
-//            when (uiState) {
-//                is TodoViewModel.ListState.EmptyList -> Unit
-//                is TodoViewModel.ListState.UpdatedList -> {
-//                    adapter.updateItems(uiState.list)
-//                }
-//            }
-//        }
 
         fab.setOnClickListener {
             val activity = requireActivity() as OnAddClickListener
