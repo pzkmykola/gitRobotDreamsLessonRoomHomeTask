@@ -6,7 +6,6 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.roomongit.databinding.ListItemLayoutBinding
-import com.example.roomongit.dbnew.PlaceFB
 
 class PlaceListAdapter(var items:List<PlaceFB> = emptyList()): RecyclerView.Adapter<PlaceListAdapter.PlaceViewHolder>() {
 

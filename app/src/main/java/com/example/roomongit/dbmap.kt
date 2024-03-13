@@ -1,5 +1,6 @@
-package com.example.roomongit.dbnew
+package com.example.roomongit
 
+//import com.google.gson.annotations.SerializedName
 //
 data class PlaceFB (
     var id: String = "",
@@ -7,7 +8,9 @@ data class PlaceFB (
     var location: String = "",
     var urlImage: String = ""
 )
-
+//data class DirectionsResponse(val routes:List<Routes>)
+//data class Routes(@SerializedName("overview_polyline" ) val overviewPolyline:OverviewPolyline)
+//data class OverviewPolyline(val points:String)
 //@Dao
 interface PlaceDao {
     //@Insert

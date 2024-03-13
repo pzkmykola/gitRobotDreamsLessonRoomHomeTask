@@ -1,8 +1,6 @@
 package com.example.roomongit
 
 import androidx.lifecycle.ViewModel
-import com.example.roomongit.dbnew.PlaceDao
-import com.example.roomongit.dbnew.PlaceFB
 
 class PlaceViewModel : ViewModel(), PlaceDao {
     private val repo = MyApplication.getApp().repo

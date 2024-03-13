@@ -1,7 +1,6 @@
 package com.example.roomongit
 
 import android.util.Log
-import com.example.roomongit.dbnew.PlaceFB
 import com.google.firebase.database.DatabaseReference
 
 

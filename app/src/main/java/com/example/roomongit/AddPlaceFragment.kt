@@ -7,9 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.example.roomongit.databinding.InputFragmentLayoutBinding
-import com.example.roomongit.dbnew.PlaceFB
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 
 class AddPlaceFragment(private var place: PlaceFB? = null): BottomSheetDialogFragment() {
