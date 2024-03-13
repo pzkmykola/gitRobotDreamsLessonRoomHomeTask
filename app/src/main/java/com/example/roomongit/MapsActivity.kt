@@ -40,12 +40,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
-
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        val inflater: MenuInflater = menuInflater
-//        inflater.inflate(R.menu.manu_main, menu)
-//        return super.onCreateOptionsMenu(menu)
-//    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -58,30 +52,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
         mMap = googleMap
-        // Add a marker in Sydney and move the camera
-        coordinatesOfTernopil = LatLng(49.553516, 25.594767)
         coordinatesOfLviv = LatLng(49.842957, 24.031111)
-        coordinatesOfSambir = LatLng(49.5207147,23.2065501)
 
         mMap.addMarker(MarkerOptions().position(coordinatesOfLviv).title("Marker in Lviv"))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinatesOfLviv,10F))
 
-        mMap.addMarker(MarkerOptions().position(coordinatesOfTernopil).title("Marker in Ternopil"))
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinatesOfTernopil, 10F))
-
-        mMap.addMarker(MarkerOptions().position(coordinatesOfSambir).title("Marker in Sambir"))
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinatesOfSambir, 10F))
-
         binding.fabBack.setOnClickListener {
-            getMyRoutes()
+            //getMyRoutes()
+            getMyPlaces()
         }
-//            supportFragmentManager.beginTransaction()
-//                .replace(com.google.android.material.R.id.container, HomeListFragment())
-//                //.addToBackStack("homeListFragment")
-//                .commit()
-//        }
     }
     private fun getMyRoutes() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -97,6 +77,57 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                             Log.d("MAPS_MAPS_ROUTES", "Got decodedPath")
                             mMap.addPolyline(PolylineOptions().addAll(decodedPath))
                         } else Log.e("MAPS_ROUTES", "No routes")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getMyPlaces() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = Client.client.create(ApiInterface2::class.java).getNearbyPlaces()
+            if (result.isSuccessful) {
+                Log.d("MAPS_PLACES", "Checked result")
+                var locations = mutableListOf<Location>()
+                result.body()?.let {
+                    it.results.forEach { result ->
+                        Log.d("MAPS_PLACES", "Result for each place")
+                        val location = result.geometry.location
+                        locations.add(location)
+                    }
+                }
+                withContext(Dispatchers.Main) {
+                    locations.forEach {
+                        Log.d("MAPS_PLACES", "Result for each location")
+                        val coordinates = LatLng(it.lat, it.lng)
+                        mMap.addMarker(MarkerOptions().position(coordinates))
+                    }
+                }
+            }
+            withContext(Dispatchers.IO) {
+                Log.d("MAPS_PLACES_ROUTES", "Start routes")
+                val placeCoordinates = mutableListOf<String>()
+                result.body()?.let { result ->
+                    result.results.forEach {
+                        placeCoordinates.add("${it.geometry.location.lat},${it.geometry.location.lng}")
+                    }
+                }
+                val waypointCoordinates = placeCoordinates.drop(0).take(10)
+                val waypointCoordinatesString =
+                    waypointCoordinates.joinToString(separator = "|")
+                val routeResult = Client.client.create(ApiInterface3::class.java)
+                    .getComplexRoute(
+                        originId = placeCoordinates[0],
+                        destinationId = placeCoordinates.last(),
+                        waypoints = waypointCoordinatesString
+                    )
+                if (routeResult.isSuccessful) {
+                    withContext(Dispatchers.Main) {
+                        routeResult.body()?.let {
+                            val polylinePoints = it.routes[0].overviewPolyline.points
+                            val decodedPath = PolyUtil.decode(polylinePoints)
+                            mMap.addPolyline(PolylineOptions().addAll(decodedPath))
+                        }
                     }
                 }
             }
