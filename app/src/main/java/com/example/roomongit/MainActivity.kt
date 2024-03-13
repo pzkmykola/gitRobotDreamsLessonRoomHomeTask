@@ -8,20 +8,28 @@ import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.SupportStreetViewPanoramaFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.common.collect.Maps
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
-class MainActivity : AppCompatActivity(), OnAuthLaunch, OnAddClickListener, OnSetMapClickListener {
+class MainActivity : AppCompatActivity(), OnAuthLaunch,
+    OnAddClickListener, OnSetMapClickListener, OnMapReadyCallback {
 
     private lateinit var supportMapFragment : SupportMapFragment
+    private lateinit var myMap: GoogleMap
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         supportMapFragment = SupportMapFragment.newInstance()
+        supportFragmentManager.beginTransaction()
+            .add(R.id.container, supportMapFragment)
+            .commit()
     }
     override fun launch(intent: Intent) {
         startActivityForResult(intent, 1)
@@ -65,11 +73,17 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch, OnAddClickListener, OnSe
             .add(com.google.android.material.R.id.container, SupportMapFragment())
             .addToBackStack("addSupportMapFragment")
             .commit()
-        supportMapFragment.getMapAsync { map ->
+//        supportMapFragment.getMapAsync { map ->
 //            val coordinatesOfLviv = LatLng(49.842957, 24.031111)
 //            map.addMarker(MarkerOptions().position(coordinatesOfLviv).title("My Position"))
-//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinatesOfLviv, 8F))
-        }
+//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinatesOfLviv, 8F))}
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        myMap = googleMap
+        val coordinatesOfLviv = LatLng(49.842957, 24.031111)
+        myMap.addMarker(MarkerOptions().position(coordinatesOfLviv).title("My Position"))
+        myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinatesOfLviv, 8F))
     }
 }
 
