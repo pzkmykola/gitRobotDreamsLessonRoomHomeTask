@@ -4,6 +4,7 @@ plugins {
 //    id("com.google.devtools.ksp") - for room
     id ("com.google.gms.google-services")
     id("kotlin-parcelize")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 //    id("org.jetbrains.kotlin.kapt") - for hilt
 //    id("com.google.dagger.hilt.android")
 }
@@ -40,6 +41,9 @@ android {
     }
 
     viewBinding { enable = true }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -66,6 +70,11 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
+
+    //retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
     //hilt
 //    implementation ("com.google.dagger:hilt-android:2.50")

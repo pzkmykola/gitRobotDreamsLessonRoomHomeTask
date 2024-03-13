@@ -19,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
 class MainActivity : AppCompatActivity(), OnAuthLaunch,
-    OnAddClickListener, OnSetMapClickListener, OnMapReadyCallback {
+    OnAddClickListener {
 
     private lateinit var supportMapFragment : SupportMapFragment
     private lateinit var myMap: GoogleMap
@@ -67,24 +67,6 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch,
             .addToBackStack("addPlaceFragment")
             .commit()
     }
-
-    override fun onFabMapClick() {
-        supportFragmentManager.beginTransaction()
-            .add(com.google.android.material.R.id.container, SupportMapFragment())
-            .addToBackStack("addSupportMapFragment")
-            .commit()
-//        supportMapFragment.getMapAsync { map ->
-//            val coordinatesOfLviv = LatLng(49.842957, 24.031111)
-//            map.addMarker(MarkerOptions().position(coordinatesOfLviv).title("My Position"))
-//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinatesOfLviv, 8F))}
-    }
-
-    override fun onMapReady(googleMap: GoogleMap) {
-        myMap = googleMap
-        val coordinatesOfLviv = LatLng(49.842957, 24.031111)
-        myMap.addMarker(MarkerOptions().position(coordinatesOfLviv).title("My Position"))
-        myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinatesOfLviv, 8F))
-    }
 }
 
 interface OnAuthLaunch {
@@ -96,6 +78,3 @@ interface OnAddClickListener{
     fun onFabClick()
 }
 
-interface OnSetMapClickListener{
-    fun onFabMapClick()
-}
