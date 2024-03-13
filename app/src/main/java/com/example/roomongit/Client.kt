@@ -13,11 +13,11 @@ object Client {
 }
 
 interface ApiInterface1 {
-    @GET("/maps/api/directions/json?&origin=49.842957,24.031111&destination=49.553516,25.594767&key=${Keys.apiKey4}")//AIzaSyBM36Lb3FAJumpAbWm1PBG50RA-VTwpWHk")
+    @GET("/maps/api/directions/json?&origin=49.842957,24.031111&destination=49.553516,25.594767&key=${Keys.apiKey4}")
     suspend fun getSimpleRoute(): retrofit2.Response<DirectionsResponse>
 }
 interface ApiInterface2 {
-    @GET("/maps/api/place/nearbysearch/json?location=49.842957,24.031111&radius=2000&type=tourist_attractions&key=${Keys.apiKey4}")//AIzaSyBM36Lb3FAJumpAbWm1PBG50RA-VTwpWHk")
+    @GET("/maps/api/place/nearbysearch/json?location=49.842957,24.031111&radius=2000&type=tourist_attractions&key=${Keys.apiKey4}")
     suspend fun getNearbyPlaces(): retrofit2.Response<PlacesResponse>
 }
 interface ApiInterface3 {
