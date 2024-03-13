@@ -12,7 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 
-class AddPlaceFragment(private var todo: PlaceFB? = null): BottomSheetDialogFragment() {
+class AddPlaceFragment(private var place: PlaceFB? = null): BottomSheetDialogFragment() {
     private lateinit var binding:InputFragmentLayoutBinding
     private var closeFunction: ((Boolean) -> Unit)? = null
     private var addTodoSuccess: Boolean = false
@@ -31,34 +31,21 @@ class AddPlaceFragment(private var todo: PlaceFB? = null): BottomSheetDialogFrag
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this@AddPlaceFragment)[PlaceViewModel::class.java]
         binding = InputFragmentLayoutBinding.bind(view)
-        todo?.let {
-            binding.todoTitle.setText(it.title)
-            binding.todoDescription.setText(it.location)
-            binding.dateDropdown.setText(it.urlImage)
-        }
-        val datePicker =
-            MaterialDatePicker.Builder.datePicker()
-                .setTitleText("Select date")
-                .build()
-        binding.dateDropdown.setOnClickListener {
-            datePicker.show(childFragmentManager, "DATE_PICKER")
-        }
-        datePicker.addOnPositiveButtonClickListener {
-            binding.dateDropdown.setText(datePicker.headerText)
+        place?.let {
+            binding.placeTitle.setText(it.title)
+            binding.placeLocation.setText(it.location)
         }
 
         binding.addButton.setOnClickListener {
-            val title = binding.todoTitle.text?.toString()
-            val note = binding.todoDescription.text?.toString()
-            val date = binding.dateDropdown.text?.toString()
+            val title = binding.placeTitle.text?.toString()
+            val location = binding.placeLocation.text?.toString()
 
             if((title == "" || title == null) ||
-                (note == "" || note == null) ||
-                (date == "" || date == null)) {
+                (location == "" || location == null)) {
                 snackbar("Some fields are empty, please try again")
             }
             else {
-                if(viewModel.add(title, note, date)){
+                if(viewModel.add(title, location, urlImage = "")){
                     snackbar("Task updated successfully")
                     closeFunction?.invoke(true)
                     this.dismiss()
@@ -69,15 +56,25 @@ class AddPlaceFragment(private var todo: PlaceFB? = null): BottomSheetDialogFrag
                     snackbar("Something is wrong, try again!!!")
                 }
             }
+//            val target = database.reference.child(
+//                account?.id ?: "unknown_account"
+//            )
+//                .child("clients")
+//                .child(UUID.randomUUID().toString())
+//            target.setValue(
+//                inputField.text.toString()
+//            ).addOnCompleteListener {
+//                parentFragmentManager.popBackStack()
+//            }
         }
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        closeFunction?.invoke(addTodoSuccess)
+        closeFunction?.invoke(true) //(addPlaceSuccess)
     }
 
     private fun snackbar(msg: String){
-        Snackbar.make(requireActivity().findViewById(R.id.frameLayoutAddTodo),msg, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(requireActivity().findViewById(R.id.frameLayoutAddPlace),msg, Snackbar.LENGTH_LONG).show()
     }
 }

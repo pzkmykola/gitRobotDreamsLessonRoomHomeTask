@@ -13,7 +13,7 @@ class PlaceViewModel : ViewModel(), PlaceDao {
 //    }
 
     override fun add(title: String, location: String, urlImage:String):Boolean{
-        return repo.add(title = title , note = location, date = urlImage)
+        return repo.add(title = title , location = location, urlImage = urlImage)
     }
     override fun remove(place: PlaceFB){
         repo.remove(place)

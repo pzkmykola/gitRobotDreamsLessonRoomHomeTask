@@ -19,7 +19,7 @@ class MyApplication: Application() {
         val account = GoogleSignIn.getLastSignedInAccount(this)
 
         target = database.reference
-            .child(account?.id ?: "unknown_account").child("Todo")
+            .child(account?.id ?: "unknown_account").child("Places")
 
         repo = PlaceRepository(target)
     }

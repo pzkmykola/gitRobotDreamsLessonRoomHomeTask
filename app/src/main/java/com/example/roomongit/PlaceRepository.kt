@@ -6,13 +6,13 @@ import com.google.firebase.database.DatabaseReference
 
 
 class PlaceRepository(private val database: DatabaseReference)  {
-    fun add(title:String?, note:String?, date:String):Boolean {
+    fun add(title:String?, location:String?, urlImage:String):Boolean {
         var ret = true
-        val userId = database.push().key
-        if (userId == null) {
+        val placeId = database.push().key
+        if (placeId == null) {
             ret = false
         }else {
-            val todoNew = PlaceFB(id = userId, title = title ?: "", location = note ?: "", urlImage = date)
+            val todoNew = PlaceFB(id = placeId, title = title ?: "", location = location ?: "", urlImage = urlImage)
             database.child(todoNew.id).setValue(todoNew).addOnCompleteListener {
                 if(!it.isSuccessful) ret = false
             }
@@ -20,14 +20,14 @@ class PlaceRepository(private val database: DatabaseReference)  {
         return ret
     }
 
-    fun remove (todo: PlaceFB) {
-        val userId = todo.id
+    fun remove (place: PlaceFB) {
+        val userId = place.id
         database.get().addOnCompleteListener {task ->
             if (task.isSuccessful) {
                 task.result.children.forEach {
                     val newItem = it.key
                     if ( newItem != null && userId == newItem) {
-                        database.child(todo.id).removeValue().addOnSuccessListener {
+                        database.child(place.id).removeValue().addOnSuccessListener {
                             Log.d(
                                 "MYRES2",
                                 "Field with id = $userId removed!!!"

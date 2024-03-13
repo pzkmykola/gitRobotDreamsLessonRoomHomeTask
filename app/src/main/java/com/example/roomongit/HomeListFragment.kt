@@ -21,17 +21,19 @@ class HomeListFragment : Fragment() {
     private lateinit var adapter: PlaceListAdapter
     private lateinit var viewModel: PlaceViewModel
     private val target = MyApplication.getApp().target
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.list_fragment_layout, container, false)
+        return inflater.inflate(R.layout.home_list_fragment_layout, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fab: FloatingActionButton = view.findViewById(R.id.fabButton)
+        val fabRunMap = view.findViewById<FloatingActionButton>(R.id.fabMap)
         viewModel = ViewModelProvider(this@HomeListFragment)[PlaceViewModel::class.java]
         listView = view.findViewById(R.id.list)
         listView.layoutManager = LinearLayoutManager(requireContext())
@@ -48,7 +50,7 @@ class HomeListFragment : Fragment() {
 
         target.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val todoList = mutableListOf<PlaceFB>()
+                val placeList = mutableListOf<PlaceFB>()
                 if (snapshot.exists()) {
                     snapshot.children.forEach {
                         val taskKey: String = it.key!!
@@ -59,11 +61,11 @@ class HomeListFragment : Fragment() {
                                     "MYRES1",
                                     "${newItem.id}/${newItem.title}/${newItem.location}/${newItem.urlImage}"
                                 )
-                                todoList.add(newItem)
+                                placeList.add(newItem)
                             }
                         }
                     }
-                    adapter = PlaceListAdapter(todoList)
+                    adapter = PlaceListAdapter(placeList)
                     listView.adapter = adapter
                 }
             }
@@ -90,5 +92,15 @@ class HomeListFragment : Fragment() {
             }
         })
         itemTouchHelper.attachToRecyclerView(listView)
+
+
+        fabRunMap.setOnClickListener {
+//            val intent = Intent(context, MapsActivity::class.java)
+//            startActivity(intent)
+//            parentFragmentManager.beginTransaction()
+//                .add(com.google.android.material.R.id.container, SupportMapFragment())
+//                .addToBackStack("mapFragment")
+//                .commit()
+        }
     }
 }

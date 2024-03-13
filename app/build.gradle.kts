@@ -49,13 +49,13 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    //database
+    //room database
     implementation("androidx.room:room-runtime:2.6.1")
-    implementation("com.google.firebase:firebase-database:20.3.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
 
-    //firebase
+    //firebase-database
+    //implementation("com.google.firebase:firebase-database:20.3.1")
     implementation (platform("com.google.firebase:firebase-bom:32.7.3"))
     //implementation ("com.google.firebase:firebase-analytics")
     implementation ("com.google.firebase:firebase-analytics-ktx")
@@ -66,6 +66,12 @@ dependencies {
     //hilt
 //    implementation ("com.google.dagger:hilt-android:2.50")
 //    kapt ("com.google.dagger:hilt-compiler:2.50")
+
+    //glide
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+
+    //picasso
+    implementation ("com.squareup.picasso:picasso:2.8")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
