@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RoomOnGit"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBm7QRoFBpOj_7ZuwB-gmGlRNdeRpHzWL4"/>
         <activity
             android:name=".MainActivity"
             android:windowSoftInputMode="adjustPan"

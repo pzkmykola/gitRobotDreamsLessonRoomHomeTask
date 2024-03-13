@@ -7,13 +7,21 @@ import android.os.Bundle
 import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.SupportStreetViewPanoramaFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
-class MainActivity : AppCompatActivity(), OnAuthLaunch, OnAddClickListener {
+class MainActivity : AppCompatActivity(), OnAuthLaunch, OnAddClickListener, OnSetMapClickListener {
+
+    private lateinit var supportMapFragment : SupportMapFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportMapFragment = SupportMapFragment.newInstance()
     }
     override fun launch(intent: Intent) {
         startActivityForResult(intent, 1)
@@ -51,6 +59,18 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch, OnAddClickListener {
             .addToBackStack("addPlaceFragment")
             .commit()
     }
+
+    override fun onFabMapClick() {
+        supportFragmentManager.beginTransaction()
+            .add(com.google.android.material.R.id.container, SupportMapFragment())
+            .addToBackStack("addSupportMapFragment")
+            .commit()
+        supportMapFragment.getMapAsync { map ->
+//            val coordinatesOfLviv = LatLng(49.842957, 24.031111)
+//            map.addMarker(MarkerOptions().position(coordinatesOfLviv).title("My Position"))
+//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinatesOfLviv, 8F))
+        }
+    }
 }
 
 interface OnAuthLaunch {
@@ -60,4 +80,8 @@ interface OnAuthLaunch {
 
 interface OnAddClickListener{
     fun onFabClick()
+}
+
+interface OnSetMapClickListener{
+    fun onFabMapClick()
 }

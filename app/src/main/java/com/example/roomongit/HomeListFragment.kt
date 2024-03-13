@@ -47,6 +47,14 @@ class HomeListFragment : Fragment() {
                 .commit()
         }
 
+        fabRunMap.setOnClickListener {
+            val activity = requireActivity() as OnSetMapClickListener
+            activity.onFabMapClick()
+//            parentFragmentManager.beginTransaction()
+//                .replace(R.id.container, SupportMapFragment() as com.google.android.gms.maps.SupportMapFragment)
+//                .commit()
+        }
+
         target.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val placeList = mutableListOf<PlaceFB>()
@@ -93,13 +101,13 @@ class HomeListFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(listView)
 
 
-        fabRunMap.setOnClickListener {
-//            val intent = Intent(context, MapsActivity::class.java)
-//            startActivity(intent)
-//            parentFragmentManager.beginTransaction()
-//                .add(com.google.android.material.R.id.container, SupportMapFragment())
-//                .addToBackStack("mapFragment")
-//                .commit()
-        }
+//        fabRunMap.setOnClickListener {
+////            val intent = Intent(context, MapsActivity::class.java)
+////            startActivity(intent)
+////            parentFragmentManager.beginTransaction()
+////                .add(com.google.android.material.R.id.container, SupportMapFragment())
+////                .addToBackStack("mapFragment")
+////                .commit()
+//        }
     }
 }
