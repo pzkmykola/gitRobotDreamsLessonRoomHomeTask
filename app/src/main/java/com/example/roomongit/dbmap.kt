@@ -10,7 +10,7 @@ data class PlaceFB (
 )
 
 object Keys{
-    const val apiKeyMain = "AIzaSyBm7QRoFBpOj_7ZuwB-gmGlRNdeRpHzWL4"
+    const val apiKeyMain = "AIzaSyBW2AHurFTdDwh1cPBrYNOzs1vTRlMOb2M"
     const val apiKey4 = "AIzaSyBcPiQgySlkhfINlqFMzQoakW7B95o3kqE"
 }
 
