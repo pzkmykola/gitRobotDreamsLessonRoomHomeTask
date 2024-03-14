@@ -1,10 +1,11 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
+//    id("com.google.devtools.ksp") - for room
     id ("com.google.gms.google-services")
     id("kotlin-parcelize")
-//    id("org.jetbrains.kotlin.kapt")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+//    id("org.jetbrains.kotlin.kapt") - for hilt
 //    id("com.google.dagger.hilt.android")
 }
 
@@ -32,14 +33,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "1.8"
     }
 
     viewBinding { enable = true }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -50,10 +54,14 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     //room database
-    implementation("androidx.room:room-runtime:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+//    implementation("androidx.room:room-runtime:2.6.1")
+//    annotationProcessor("androidx.room:room-compiler:2.6.1")
+//    ksp("androidx.room:room-compiler:2.6.1")
 
+    //google maps
+    implementation ("com.google.android.gms:play-services-maps:18.2.0")
+    implementation ("com.google.maps.android:android-maps-utils:3.5.3")
+    
     //firebase-database
     //implementation("com.google.firebase:firebase-database:20.3.1")
     implementation (platform("com.google.firebase:firebase-bom:32.7.3"))
@@ -62,6 +70,11 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
+
+    //retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
     //hilt
 //    implementation ("com.google.dagger:hilt-android:2.50")

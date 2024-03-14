@@ -1,5 +1,6 @@
 package com.example.roomongit
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,10 +11,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.maps.android.PolyUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeListFragment : Fragment() {
     private lateinit var  listView: RecyclerView
@@ -94,12 +102,12 @@ class HomeListFragment : Fragment() {
 
 
         fabRunMap.setOnClickListener {
-//            val intent = Intent(context, MapsActivity::class.java)
-//            startActivity(intent)
-//            parentFragmentManager.beginTransaction()
-//                .add(com.google.android.material.R.id.container, SupportMapFragment())
-//                .addToBackStack("mapFragment")
-//                .commit()
+            val intent = Intent(context, MapsActivity::class.java)
+            startActivity(intent)
+            parentFragmentManager.beginTransaction()
+                .add(com.google.android.material.R.id.container, SupportMapFragment())
+                .addToBackStack("mapFragment")
+                .commit()
         }
     }
 }
