@@ -11,7 +11,7 @@ data class PlaceFB (
 )
 
 data class PlaceMap (
-    var coordinatesOf: String = "49.842957, 24.031111",//),
+    var coordinatesOf: String = "49.842957, 24.031111",
     var title: String = "Marker in Lviv"
 )
 object Keys{
@@ -33,7 +33,7 @@ interface PlaceDao {
     //@Delete
     fun remove(place: PlaceFB)
 
-    fun setCoordinate(placeMap: PlaceMap) : String
+    fun setCoordinate(placeMap: PlaceMap) : LatLng
     fun setTitle(placeMap: PlaceMap) : String
 }
 
