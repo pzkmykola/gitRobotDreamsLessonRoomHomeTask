@@ -22,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
@@ -56,6 +56,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.setOnMapClickListener(this)
 
         mMap = googleMap
         coordinatesOfLviv = PlaceMap("49.842957,24.031111", "Lviv")
@@ -83,19 +84,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.fabPlaces.setOnClickListener {
             if(origin!= null) {
+                binding.tapText.text = "Tapped to get places"
                 viewModel.getMyPlaces(mMap, origin!!)
             }else{
-                Toast.makeText(this, "Place origin!!!", Toast.LENGTH_LONG).show()
+                binding.tapText.text = "Place origin point!!!"
             }
         }
 
         binding.fabRoutes.setOnClickListener {
             if((origin != null) && (destination != null)){
+                binding.tapText.text = "Tapped to get routes"
                 viewModel.getMyRoutes(mMap, origin!!, destination!!)
             } else {
-                Toast.makeText(this, "Place origin and destination!!!", Toast.LENGTH_LONG).show()
+                binding.tapText.text = "Place origin and destination points!!!"
             }
 
         }
+    }
+    override fun onMapClick(point: LatLng) {
+        binding.tapText.text = "tapped, point=$point"
     }
 }
