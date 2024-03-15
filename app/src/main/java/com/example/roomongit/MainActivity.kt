@@ -26,10 +26,6 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        supportMapFragment = SupportMapFragment.newInstance()
-//        supportFragmentManager.beginTransaction()
-//            .add(R.id.container, supportMapFragment)
-//            .commit()
     }
     override fun launch(intent: Intent) {
         startActivityForResult(intent, 1)

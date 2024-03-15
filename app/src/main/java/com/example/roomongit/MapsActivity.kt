@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
+import androidx.lifecycle.ViewModelProvider
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -24,16 +25,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
-
-    private lateinit var coordinatesOfLviv: LatLng
-    private lateinit var coordinatesOfTernopil: LatLng
-    private lateinit var coordinatesOfSambir: LatLng
+    //private lateinit var viewModel: PlaceViewModel
+    private lateinit var coordinatesOfLviv: PlaceMap //= <PlaceMap>("49.842957, 24.031111", "Marker in Lviv")
+    private lateinit var coordinatesOfTernopil: PlaceMap //= <PlaceMap>("49.553516,25.5947767", "Marker in Ternopil")
+    private lateinit var coordinatesOfSambir: PlaceMap //= <PlaceMap>("49.5207147,23.2065501", "Marker in Sambir")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+//        viewModel = ViewModelProvider(this)[PlaceViewModel::class.java]
+//        viewModel = PlaceViewModel()
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -44,7 +46,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * we just add a marker near Lviv, Ukraine.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -53,14 +55,35 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
 
         mMap = googleMap
-        coordinatesOfLviv = LatLng(49.842957, 24.031111)
+        coordinatesOfLviv = PlaceMap("49.842957,24.031111", "Lviv")
+//        coordinatesOfLviv.coordinatesOf = "49.842957,24.031111"
+//        coordinatesOfLviv.title = "Lviv"
+        coordinatesOfTernopil = PlaceMap("49.553516,25.5947767", "Ternopil")
+//        coordinatesOfTernopil.coordinatesOf = "49.553516,25.5947767"
+//        coordinatesOfTernopil.title = "Ternopil"
+        coordinatesOfTernopil = PlaceMap("49.5207147,23.2065501", "Sambir")
+//        coordinatesOfSambir.coordinatesOf = "49.5207147,23.2065501"
+//        coordinatesOfSambir.title = "Sambir"
+        var coor: LatLng = objToLatLng(coordinatesOfLviv.coordinatesOf)
+        mMap.addMarker(MarkerOptions()
+            .position(coor)
+            .title(coordinatesOfLviv.title))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor,10F))
+        coor = objToLatLng(coordinatesOfTernopil.coordinatesOf)
+        mMap.addMarker(MarkerOptions()
+            .position(coor)
+            .title(coordinatesOfTernopil.title))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor,10F))
+        coor = objToLatLng(coordinatesOfSambir.coordinatesOf)
+        mMap.addMarker(MarkerOptions()
+            .position(coor)
+            .title(coordinatesOfSambir.title))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor,10F))
 
-        mMap.addMarker(MarkerOptions().position(coordinatesOfLviv).title("Marker in Lviv"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinatesOfLviv,10F))
 
         binding.fabBack.setOnClickListener {
             //getMyRoutes()
-            getMyPlaces()
+            //getMyPlaces()
         }
     }
     private fun getMyRoutes() {
@@ -131,6 +154,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                 }
             }
+        }
+    }
+    companion object{
+        fun objToLatLng(latlan: String): LatLng {
+            val latlanNew = latlan.replace(",","@")
+            val llReplacedParts: List<String> = latlanNew.split("@" )
+            return LatLng(
+                llReplacedParts[0].toDouble(),
+                llReplacedParts[1].toDouble()
+            )
         }
     }
 }
