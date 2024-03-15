@@ -31,7 +31,16 @@ class PlaceViewModel : ViewModel(), PlaceDao {
     override fun setTitle(placeMap: PlaceMap): String {
         return placeMap.title
     }
-    fun getMyRoutes(map: GoogleMap) {
+    fun getMyRoutes(map: GoogleMap, origin:PlaceMap, destination:PlaceMap) {
+        map.clear()
+        val coor1: LatLng = setCoordinate(origin)
+        map.addMarker(MarkerOptions()
+            .position(coor1)
+            .title(setTitle(origin)))
+        val coor2: LatLng = setCoordinate(destination)
+        map.addMarker(MarkerOptions()
+            .position(coor2)
+            .title(setTitle(destination)))
         CoroutineScope(Dispatchers.IO).launch {
             val result = Client.client.create(ApiInterface1::class.java).getSimpleRoute()
             if (result.isSuccessful) {
@@ -52,6 +61,7 @@ class PlaceViewModel : ViewModel(), PlaceDao {
     }
 
     fun getMyPlaces(map: GoogleMap, placeMap: PlaceMap) {
+        map.clear()
         val coor1: LatLng = setCoordinate(placeMap)
         map.addMarker(MarkerOptions()
             .position(coor1)

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -29,6 +30,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var coordinatesOfLviv: PlaceMap //= <PlaceMap>("49.842957, 24.031111", "Marker in Lviv")
     private lateinit var coordinatesOfTernopil: PlaceMap //= <PlaceMap>("49.553516,25.5947767", "Marker in Ternopil")
     private lateinit var coordinatesOfSambir: PlaceMap //= <PlaceMap>("49.5207147,23.2065501", "Marker in Sambir")
+    private var origin: PlaceMap? = null
+    private var destination: PlaceMap? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,25 +63,39 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         coordinatesOfSambir = PlaceMap("49.5207147,23.2065501", "Sambir")
 
         val coor1: LatLng = viewModel.setCoordinate(coordinatesOfLviv)
+        origin = coordinatesOfLviv
         mMap.addMarker(MarkerOptions()
             .position(coor1)
             .title(viewModel.setTitle(coordinatesOfLviv)))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor1,8F))
-//        val coor2 = viewModel.setCoordinate(coordinatesOfTernopil)
-//        mMap.addMarker(MarkerOptions()
-//            .position(coor2)
-//            .title(viewModel.setTitle(coordinatesOfTernopil)))
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor2,6F))
-//        val coor3 = viewModel.setCoordinate(coordinatesOfSambir)
-//        mMap.addMarker(MarkerOptions()
-//            .position(coor3)
-//            .title(viewModel.setTitle(coordinatesOfSambir)))
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor3,6F))
+        val coor2 = viewModel.setCoordinate(coordinatesOfTernopil)
+        destination = coordinatesOfTernopil
+        mMap.addMarker(MarkerOptions()
+            .position(coor2)
+            .title(viewModel.setTitle(coordinatesOfTernopil)))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor2,6F))
+        val coor3 = viewModel.setCoordinate(coordinatesOfSambir)
+        mMap.addMarker(MarkerOptions()
+            .position(coor3)
+            .title(viewModel.setTitle(coordinatesOfSambir)))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor3,6F))
 
 
-        binding.fabBack.setOnClickListener {
-            //viewModel.getMyRoutes(mMap)
-            viewModel.getMyPlaces(mMap, coordinatesOfLviv)
+        binding.fabPlaces.setOnClickListener {
+            if(origin!= null) {
+                viewModel.getMyPlaces(mMap, origin!!)
+            }else{
+                Toast.makeText(this, "Place origin!!!", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        binding.fabRoutes.setOnClickListener {
+            if((origin != null) && (destination != null)){
+                viewModel.getMyRoutes(mMap, origin!!, destination!!)
+            } else {
+                Toast.makeText(this, "Place origin and destination!!!", Toast.LENGTH_LONG).show()
+            }
+
         }
     }
 }
