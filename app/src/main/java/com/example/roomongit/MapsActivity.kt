@@ -1,28 +1,21 @@
 package com.example.roomongit
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-
+import com.example.roomongit.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.example.roomongit.databinding.ActivityMapsBinding
-import com.google.android.gms.maps.model.PolylineOptions
-import com.google.maps.android.PolyUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener, OnMapReadyCallback {
+
+class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
+    GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
@@ -32,6 +25,8 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener, OnMapRea
     private lateinit var coordinatesOfSambir: PlaceMap //= <PlaceMap>("49.5207147,23.2065501", "Marker in Sambir")
     private var origin: PlaceMap? = null
     private var destination: PlaceMap? = null
+    private var previousMarker:Marker? = null
+    private var tappedList = mutableListOf<PlaceMap>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,6 +52,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener, OnMapRea
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.setOnMapClickListener(this)
+        mMap.setOnMarkerClickListener(this);
 
         mMap = googleMap
         coordinatesOfLviv = PlaceMap("49.842957,24.031111", "Lviv")
@@ -64,18 +60,21 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener, OnMapRea
         coordinatesOfSambir = PlaceMap("49.5207147,23.2065501", "Sambir")
 
         val coor1: LatLng = viewModel.setCoordinate(coordinatesOfLviv)
-        origin = coordinatesOfLviv
+        tappedList.add(coordinatesOfLviv)
+        //origin = coordinatesOfLviv
         mMap.addMarker(MarkerOptions()
             .position(coor1)
             .title(viewModel.setTitle(coordinatesOfLviv)))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor1,8F))
         val coor2 = viewModel.setCoordinate(coordinatesOfTernopil)
-        destination = coordinatesOfTernopil
+        tappedList.add(coordinatesOfTernopil)
+        //destination = coordinatesOfTernopil
         mMap.addMarker(MarkerOptions()
             .position(coor2)
             .title(viewModel.setTitle(coordinatesOfTernopil)))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor2,6F))
         val coor3 = viewModel.setCoordinate(coordinatesOfSambir)
+        tappedList.add(coordinatesOfSambir)
         mMap.addMarker(MarkerOptions()
             .position(coor3)
             .title(viewModel.setTitle(coordinatesOfSambir)))
@@ -104,4 +103,42 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener, OnMapRea
     override fun onMapClick(point: LatLng) {
         binding.tapText.text = "tapped, point=$point"
     }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        val locAddress = marker.title
+        binding.tapText.text = "tapped $locAddress"
+
+        if (previousMarker != null) {
+            previousMarker?.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+        }
+        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+        previousMarker = marker
+
+        if(origin == null){
+            if(tappedList.isNotEmpty()) {
+                tappedList.forEach {
+                    val coor = viewModel.toLatLng(it.coordinatesOf)
+                    if (marker.position == coor) {
+                        origin = it
+                        binding.tapText.text = "Origin is defined to ${it.title}"
+                        return@forEach
+                    }
+                }
+            }
+        } else if(destination == null){
+            if(tappedList.isNotEmpty()) {
+                tappedList.forEach {
+                    val coor = viewModel.toLatLng(it.coordinatesOf)
+                    if (marker.position == coor) {
+                        destination = it
+                        binding.tapText.text = "Destination is defined to ${it.title}"
+                        return@forEach
+                    }
+                }
+            }
+        } else binding.tapText.text = "Origin  and Destination already defined!"
+
+        return true
+    }
+
 }

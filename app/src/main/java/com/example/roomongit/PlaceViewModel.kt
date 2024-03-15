@@ -117,7 +117,7 @@ class PlaceViewModel : ViewModel(), PlaceDao {
         }
     }
 
-    private fun toLatLng(latlan: String): LatLng {
+    fun toLatLng(latlan: String): LatLng {
         val latlanNew = latlan.replace(",","@")
         val llReplacedParts: List<String> = latlanNew.split("@" )
         return LatLng(
