@@ -1,8 +1,10 @@
 package com.example.roomongit
 
+import com.google.android.gms.common.api.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 object Client {
@@ -13,8 +15,12 @@ object Client {
 }
 
 interface ApiInterface1 {
-    @GET("/maps/api/directions/json?&origin=49.842957,24.031111&destination=49.553516,25.594767&key=${Keys.apiKey4}")
-    suspend fun getSimpleRoute(): retrofit2.Response<DirectionsResponse>
+    @GET("/maps/api/directions/json?")
+    suspend fun getSimpleRoute(
+        @Query("origin") originId: String,
+        @Query("destination") destinationId: String,
+        @Query("key") key: String = Keys.apiKey4
+    ): retrofit2.Response<DirectionsResponse>
 }
 interface ApiInterface2 {
     @GET("/maps/api/place/nearbysearch/json?location=49.842957,24.031111&radius=2000&type=tourist_attractions&key=${Keys.apiKey4}")

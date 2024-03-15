@@ -42,7 +42,8 @@ class PlaceViewModel : ViewModel(), PlaceDao {
             .position(coor2)
             .title(setTitle(destination)))
         CoroutineScope(Dispatchers.IO).launch {
-            val result = Client.client.create(ApiInterface1::class.java).getSimpleRoute()
+            val result = Client.client.create(ApiInterface1::class.java)
+                .getSimpleRoute(origin.coordinatesOf,destination.coordinatesOf)
             if (result.isSuccessful) {
                 Log.d("APS_ROUTES", "Checked result")
                 withContext(Dispatchers.Main) {
