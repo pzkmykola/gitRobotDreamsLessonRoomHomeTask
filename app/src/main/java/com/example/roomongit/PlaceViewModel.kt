@@ -2,6 +2,7 @@ package com.example.roomongit
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -50,7 +51,12 @@ class PlaceViewModel : ViewModel(), PlaceDao {
         }
     }
 
-    fun getMyPlaces(map: GoogleMap) {
+    fun getMyPlaces(map: GoogleMap, placeMap: PlaceMap) {
+        val coor1: LatLng = setCoordinate(placeMap)
+        map.addMarker(MarkerOptions()
+            .position(coor1)
+            .title(setTitle(placeMap)))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(coor1,8F))
         CoroutineScope(Dispatchers.IO).launch {
             val result = Client.client.create(ApiInterface2::class.java).getNearbyPlaces()
             if (result.isSuccessful) {

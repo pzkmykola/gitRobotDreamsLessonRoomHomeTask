@@ -63,7 +63,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.addMarker(MarkerOptions()
             .position(coor1)
             .title(viewModel.setTitle(coordinatesOfLviv)))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor1,6F))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor1,8F))
 //        val coor2 = viewModel.setCoordinate(coordinatesOfTernopil)
 //        mMap.addMarker(MarkerOptions()
 //            .position(coor2)
@@ -78,7 +78,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.fabBack.setOnClickListener {
             //viewModel.getMyRoutes(mMap)
-            viewModel.getMyPlaces(mMap)
+            viewModel.getMyPlaces(mMap, coordinatesOfLviv)
         }
     }
 }
