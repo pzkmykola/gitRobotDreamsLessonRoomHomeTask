@@ -6,29 +6,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.google.maps.android.PolyUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 class HomeListFragment : Fragment() {
     private lateinit var  listView: RecyclerView
     private lateinit var adapter: PlaceListAdapter
     private lateinit var viewModel: PlaceViewModel
     private val target = MyApplication.getApp().target
-
+    private lateinit var placeList: MutableList<PlaceFB>
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,39 +43,42 @@ class HomeListFragment : Fragment() {
         listView.layoutManager = LinearLayoutManager(requireContext())
         adapter = PlaceListAdapter()
         listView.adapter = adapter
+        viewModel.uiState.observe(viewLifecycleOwner) { uiState ->
+            when (uiState) {
+                is PlaceViewModel.UIState.Empty -> Unit
 
-        fab.setOnClickListener {
-            val activity = requireActivity() as OnAddClickListener
-            activity.onFabClick()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.container, AddPlaceFragment())
-                .commit()
-        }
+                is PlaceViewModel.UIState.Processing -> Unit
 
-        target.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val placeList = mutableListOf<PlaceFB>()
-                if (snapshot.exists()) {
-                    snapshot.children.forEach {
-                        val taskKey: String = it.key!!
-                        if (taskKey != "") {
-                            val newItem = it.getValue(PlaceFB::class.java)
-                            if (newItem != null && taskKey == newItem.id) {
-                                Log.d(
-                                    "MYRES1",
-                                    "${newItem.id}/${newItem.title}/${newItem.location}/${newItem.urlImage}"
-                                )
-                                placeList.add(newItem)
-                            }
-                        }
-                    }
-                    adapter = PlaceListAdapter(placeList)
+                is PlaceViewModel.UIState.Result -> {
+                    adapter.updateItems(uiState.list)
                     listView.adapter = adapter
                 }
             }
-            override fun onCancelled(error: DatabaseError) {
-            }
-        })
+
+        }
+//        target.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                placeList = mutableListOf()
+//                if (snapshot.exists()) {
+//                    snapshot.children.forEach {
+//                        val taskKey: String = it.key!!
+//                        if (taskKey != "") {
+//                            val newItem = it.getValue(PlaceFB::class.java)
+//                            if (newItem != null && taskKey == newItem.id) {
+//                                Log.d(
+//                                    "MYRES1",
+//                                    "${newItem.id}/${newItem.title}/${newItem.location}/${newItem.urlImage}"
+//                                )
+//                                placeList.add(newItem)
+//                            }
+//                        }
+//                    }
+//                    adapter.updateItems(placeList)
+//                }
+//            }
+//            override fun onCancelled(error: DatabaseError) {
+//            }
+//        })
 
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
             override fun getMovementFlags(
@@ -100,6 +100,13 @@ class HomeListFragment : Fragment() {
         })
         itemTouchHelper.attachToRecyclerView(listView)
 
+        fab.setOnClickListener {
+            val activity = requireActivity() as OnAddClickListener
+            activity.onFabClick()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, AddPlaceFragment())
+                .commit()
+        }
 
         fabRunMap.setOnClickListener {
             val intent = Intent(context, MapsActivity::class.java)

@@ -20,13 +20,13 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var viewModel: PlaceViewModel
-    private lateinit var coordinatesOfLviv: PlaceMap //= <PlaceMap>("49.842957, 24.031111", "Marker in Lviv")
-    private lateinit var coordinatesOfTernopil: PlaceMap //= <PlaceMap>("49.553516,25.5947767", "Marker in Ternopil")
-    private lateinit var coordinatesOfSambir: PlaceMap //= <PlaceMap>("49.5207147,23.2065501", "Marker in Sambir")
-    private var origin: PlaceMap? = null
-    private var destination: PlaceMap? = null
+    private lateinit var locationOfLviv: PlaceFB//("49.842957, 24.031111", "Marker in Lviv")
+    private lateinit var locationOfTernopil: PlaceFB //("49.553516,25.5947767", "Marker in Ternopil")
+    private lateinit var locationOfSambir: PlaceFB//("49.5207147,23.2065501", "Marker in Sambir")
+    private var origin:PlaceFB? = null
     private var previousMarker:Marker? = null
-    private var tappedList = mutableListOf<PlaceMap>()
+    private var tappedList = mutableListOf<PlaceFB>() //mutabl
+    private var destination:PlaceFB? = null//:eListOf<PlaceMap>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,29 +55,29 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         mMap.setOnMarkerClickListener(this);
 
         mMap = googleMap
-        coordinatesOfLviv = PlaceMap("49.842957,24.031111", "Lviv")
-        coordinatesOfTernopil = PlaceMap("49.553516,25.5947767", "Ternopil")
-        coordinatesOfSambir = PlaceMap("49.5207147,23.2065501", "Sambir")
+        locationOfLviv = PlaceFB("", "Lviv","49.842957,24.031111" ,"")
+        locationOfTernopil = PlaceFB("","Ternopil","49.553516,25.5947767","" )
+        locationOfSambir = PlaceFB("","Sambir","49.5207147,23.2065501", "")
 
-        val coor1: LatLng = viewModel.setCoordinate(coordinatesOfLviv)
-        tappedList.add(coordinatesOfLviv)
-        //origin = coordinatesOfLviv
+        val coor1: LatLng = viewModel.setCoordinate(locationOfLviv)
+        tappedList.add(locationOfLviv)
+        //origin = locationOfLviv
         mMap.addMarker(MarkerOptions()
             .position(coor1)
-            .title(viewModel.setTitle(coordinatesOfLviv)))
+            .title(viewModel.setTitle(locationOfLviv)))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor1,8F))
-        val coor2 = viewModel.setCoordinate(coordinatesOfTernopil)
-        tappedList.add(coordinatesOfTernopil)
-        //destination = coordinatesOfTernopil
+        val coor2 = viewModel.setCoordinate(locationOfTernopil)
+        tappedList.add(locationOfTernopil)
+        //destination = locationOfTernopil
         mMap.addMarker(MarkerOptions()
             .position(coor2)
-            .title(viewModel.setTitle(coordinatesOfTernopil)))
+            .title(viewModel.setTitle(locationOfTernopil)))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor2,6F))
-        val coor3 = viewModel.setCoordinate(coordinatesOfSambir)
-        tappedList.add(coordinatesOfSambir)
+        val coor3 = viewModel.setCoordinate(locationOfSambir)
+        tappedList.add(locationOfSambir)
         mMap.addMarker(MarkerOptions()
             .position(coor3)
-            .title(viewModel.setTitle(coordinatesOfSambir)))
+            .title(viewModel.setTitle(locationOfSambir)))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor3,6F))
 
 
@@ -117,7 +117,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         if(origin == null){
             if(tappedList.isNotEmpty()) {
                 tappedList.forEach {
-                    val coor = viewModel.toLatLng(it.coordinatesOf)
+                    val coor = viewModel.toLatLng(it.location)//coordinatesOf)
                     if (marker.position == coor) {
                         origin = it
                         binding.tapText.text = "Origin is defined to ${it.title}"
@@ -128,7 +128,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         } else if(destination == null){
             if(tappedList.isNotEmpty()) {
                 tappedList.forEach {
-                    val coor = viewModel.toLatLng(it.coordinatesOf)
+                    val coor = viewModel.toLatLng(it.location)
                     if (marker.position == coor) {
                         destination = it
                         binding.tapText.text = "Destination is defined to ${it.title}"

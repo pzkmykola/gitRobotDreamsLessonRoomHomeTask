@@ -71,6 +71,8 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
 
+    //coroutines
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     //retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.okhttp3:okhttp:4.11.0")

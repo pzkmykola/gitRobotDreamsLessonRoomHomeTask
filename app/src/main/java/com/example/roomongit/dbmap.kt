@@ -1,5 +1,7 @@
 package com.example.roomongit
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 //
@@ -10,10 +12,6 @@ data class PlaceFB (
     var urlImage: String = ""
 )
 
-data class PlaceMap (
-    var coordinatesOf: String = "49.842957, 24.031111",
-    var title: String = "Marker in Lviv"
-)
 object Keys{
     const val apiKeyMain = "AIzaSyBW2AHurFTdDwh1cPBrYNOzs1vTRlMOb2M"
     const val apiKey4 = "AIzaSyBcPiQgySlkhfINlqFMzQoakW7B95o3kqE"
@@ -28,15 +26,14 @@ data class Location(val lat:Double, val lng:Double)
 data class Photos (@SerializedName("photo_reference") val photoReference:String? = null)
 
 interface PlaceDao {
-    //@Insert
     fun add(title: String, location: String, urlImage:String):Boolean
-    //@Delete
     fun remove(place: PlaceFB)
-
-    fun setCoordinate(placeMap: PlaceMap) : LatLng
-    fun setTitle(placeMap: PlaceMap) : String
 }
 
+interface PlaceMapDao{
+    fun setCoordinate(placeMap: PlaceFB) : LatLng
+    fun setTitle(placeMap: PlaceFB) : String
+}
 //abstract class TodoDatabase : RoomDatabase(){
 //    abstract fun placeDao():PlaceDao
 //}

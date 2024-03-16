@@ -2,19 +2,64 @@ package com.example.roomongit
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.maps.android.PolyUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class PlaceViewModel : ViewModel(), PlaceDao {
+import kotlinx.coroutines.async
+class PlaceViewModel : ViewModel(), PlaceDao, PlaceMapDao {
+    private var placeList:MutableList<PlaceFB> = mutableListOf()
     private val repo = MyApplication.getApp().repo
+    private var _uiState = MutableLiveData<UIState>(UIState.Empty)
+    val uiState: LiveData<UIState> = _uiState
+
+    init
+    {
+        getAll()
+    }
+
+    private fun getAll() {
+        repo.database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                _uiState.value = UIState.Processing
+                placeList = mutableListOf()
+                if (snapshot.exists()) {
+                    snapshot.children.forEach {
+                        val taskKey: String = it.key!!
+                        if (taskKey != "") {
+                            val newItem = it.getValue(PlaceFB::class.java)
+                            if (newItem != null && taskKey == newItem.id) {
+                                Log.d(
+                                    "MYRES1",
+                                    "${newItem.id}/${newItem.title}/${newItem.location}/${newItem.urlImage}"
+                                )
+                                placeList.add(newItem)
+                            }
+                        }
+                    }
+                    if (placeList.isNotEmpty())  {
+                        _uiState.postValue(UIState.Result(placeList))
+                    }
+                    _uiState.value == UIState.Empty
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+    }
 
     override fun add(title: String, location: String, urlImage:String):Boolean{
         return repo.add(title = title , location = location, urlImage = urlImage)
@@ -23,15 +68,15 @@ class PlaceViewModel : ViewModel(), PlaceDao {
         repo.remove(place)
     }
 
-    override fun setCoordinate(placeMap: PlaceMap): LatLng {
-        val coor:LatLng = toLatLng(placeMap.coordinatesOf)
+    override fun setCoordinate(placeMap: PlaceFB): LatLng {
+        val coor:LatLng = toLatLng(placeMap.location)
         return coor
     }
 
-    override fun setTitle(placeMap: PlaceMap): String {
+    override fun setTitle(placeMap: PlaceFB): String {
         return placeMap.title
     }
-    fun getMyRoutes(map: GoogleMap, origin:PlaceMap, destination:PlaceMap) {
+    fun getMyRoutes(map: GoogleMap, origin:PlaceFB, destination:PlaceFB) {
         map.clear()
         val coor1: LatLng = setCoordinate(origin)
         map.addMarker(MarkerOptions()
@@ -43,7 +88,7 @@ class PlaceViewModel : ViewModel(), PlaceDao {
             .title(setTitle(destination)))
         CoroutineScope(Dispatchers.IO).launch {
             val result = Client.client.create(ApiInterface1::class.java)
-                .getSimpleRoute(origin.coordinatesOf,destination.coordinatesOf)
+                .getSimpleRoute(origin.location,destination.location)
             if (result.isSuccessful) {
                 Log.d("APS_ROUTES", "Checked result")
                 withContext(Dispatchers.Main) {
@@ -61,7 +106,7 @@ class PlaceViewModel : ViewModel(), PlaceDao {
         }
     }
 
-    fun getMyPlaces(map: GoogleMap, placeMap: PlaceMap) {
+    fun getMyPlaces(map: GoogleMap, placeMap: PlaceFB) {
         map.clear()
         val coor1: LatLng = setCoordinate(placeMap)
         map.addMarker(MarkerOptions()
@@ -125,5 +170,11 @@ class PlaceViewModel : ViewModel(), PlaceDao {
             llReplacedParts[0].toDouble(),
             llReplacedParts[1].toDouble()
         )
+    }
+
+    sealed class UIState {
+        object Empty : UIState()
+        object Processing : UIState()
+        class Result(val list: List<PlaceFB>) : UIState()
     }
 }
