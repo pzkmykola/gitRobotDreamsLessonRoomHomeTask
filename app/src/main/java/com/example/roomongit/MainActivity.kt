@@ -7,10 +7,16 @@ import android.os.Bundle
 import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
-class MainActivity : AppCompatActivity(), OnAuthLaunch, OnAddClickListener {
+class MainActivity : AppCompatActivity(), OnAuthLaunch,
+    OnAddClickListener {
+
+    private lateinit var supportMapFragment : SupportMapFragment
+    private lateinit var myMap: GoogleMap
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -61,3 +67,4 @@ interface OnAuthLaunch {
 interface OnAddClickListener{
     fun onFabClick()
 }
+

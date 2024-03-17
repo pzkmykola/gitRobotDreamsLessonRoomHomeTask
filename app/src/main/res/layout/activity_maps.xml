@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map"
+    android:name="com.google.android.gms.maps.SupportMapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tap_text"
+            android:text="tap_instructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabPlaces"
+                android:src="@android:drawable/ic_menu_gallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabRoutes"
+                android:src="@android:drawable/ic_input_get"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"/>
+            <ImageView
+                android:id="@+id/mapImage"
+                android:clickable="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="4dp"
+                android:src="@mipmap/ic_launcher"
+                android:layout_width="240dp"
+                android:layout_height="100dp"/>
+        </LinearLayout>
+        <EditText
+            android:id="@+id/queryId"
+            android:text="tourist_attraction"
+            android:backgroundTint="@color/common_google_signin_btn_text_dark_focused"
+            android:tooltipText="Enter query:"
+            android:textSize="16dp"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</fragment>

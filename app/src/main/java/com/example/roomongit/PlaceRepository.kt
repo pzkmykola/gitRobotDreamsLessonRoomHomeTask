@@ -3,8 +3,7 @@ package com.example.roomongit
 import android.util.Log
 import com.google.firebase.database.DatabaseReference
 
-
-class PlaceRepository(private val database: DatabaseReference)  {
+class PlaceRepository(val database: DatabaseReference)  {
     fun add(title:String?, location:String?, urlImage:String):Boolean {
         var ret = true
         val placeId = database.push().key

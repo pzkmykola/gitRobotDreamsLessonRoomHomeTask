@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "878710138401-k6fjj920tqa7b2ovqnp7qv3dqkppcmb9.apps.googleusercontent.com",
+          "client_id": "878710138401-9bsh483mrmaj7n6dbba5l5l2em9oj80v.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.roomongit",
-            "certificate_hash": "0de19755cdb7aee260d2ad35aaf5bd2ca57fad4c"
+            "certificate_hash": "c4bef2df80d560d229f597208207533ccc0008e6"
           }
         },
         {
