@@ -132,7 +132,8 @@ class PlaceViewModel : ViewModel(), PlaceDao, PlaceMapDao {
             .title(setTitle(placeMap)))
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(coor1,8F))
         CoroutineScope(Dispatchers.IO).launch {
-            val result = Client.client.create(ApiInterface2::class.java).getNearbyPlaces()
+            val result = Client.client.create(ApiInterface2::class.java)
+                .getNearbyPlaces(placeMap.location,"1000","tourist_attractions")
             if (result.isSuccessful) {
                 Log.d("MAPS_PLACES", "Checked result")
                 var locations = mutableListOf<Location>()
@@ -159,7 +160,7 @@ class PlaceViewModel : ViewModel(), PlaceDao, PlaceMapDao {
                         placeCoordinates.add("${it.geometry.location.lat},${it.geometry.location.lng}")
                     }
                 }
-                val waypointCoordinates = placeCoordinates.drop(0).take(10)
+                val waypointCoordinates = placeCoordinates.drop(0).take(8)
                 val waypointCoordinatesString =
                     waypointCoordinates.joinToString(separator = "|")
                 val routeResult = Client.client.create(ApiInterface3::class.java)

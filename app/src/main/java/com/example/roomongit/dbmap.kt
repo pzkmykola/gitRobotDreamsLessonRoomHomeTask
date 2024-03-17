@@ -1,7 +1,5 @@
 package com.example.roomongit
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
 //

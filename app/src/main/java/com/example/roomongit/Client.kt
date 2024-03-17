@@ -23,8 +23,13 @@ interface ApiInterface1 {
     ): retrofit2.Response<DirectionsResponse>
 }
 interface ApiInterface2 {
-    @GET("/maps/api/place/nearbysearch/json?location=49.842957,24.031111&radius=2000&type=tourist_attractions&key=${Keys.apiKey4}")
-    suspend fun getNearbyPlaces(): retrofit2.Response<PlacesResponse>
+    @GET("/maps/api/place/nearbysearch/json?")
+    suspend fun getNearbyPlaces(
+        @Query("location") locationId: String,
+        @Query("radius") radiusId: String,
+        @Query("type") typeId: String,
+        @Query("key") key: String = Keys.apiKey4
+    ): retrofit2.Response<PlacesResponse>
 }
 interface ApiInterface3 {
     @GET("/maps/api/directions/json?")
