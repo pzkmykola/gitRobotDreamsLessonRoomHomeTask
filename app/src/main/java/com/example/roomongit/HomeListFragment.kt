@@ -24,7 +24,7 @@ class HomeListFragment : Fragment() {
     private lateinit var  listView: RecyclerView
     private lateinit var adapter: PlaceListAdapter
     private lateinit var viewModel: PlaceViewModel
-    private val target = MyApplication.getApp().target
+    //private val target = MyApplication.getApp().target
     private lateinit var placeList: MutableList<PlaceFB>
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,35 +50,14 @@ class HomeListFragment : Fragment() {
                 is PlaceViewModel.UIState.Processing -> Unit
 
                 is PlaceViewModel.UIState.Result -> {
-                    adapter.updateItems(uiState.list)
+                    adapter.updateItems(uiState.placeList)
                     listView.adapter = adapter
                 }
+
+                is PlaceViewModel.UIState.InMap -> Unit
             }
 
         }
-//        target.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                placeList = mutableListOf()
-//                if (snapshot.exists()) {
-//                    snapshot.children.forEach {
-//                        val taskKey: String = it.key!!
-//                        if (taskKey != "") {
-//                            val newItem = it.getValue(PlaceFB::class.java)
-//                            if (newItem != null && taskKey == newItem.id) {
-//                                Log.d(
-//                                    "MYRES1",
-//                                    "${newItem.id}/${newItem.title}/${newItem.location}/${newItem.urlImage}"
-//                                )
-//                                placeList.add(newItem)
-//                            }
-//                        }
-//                    }
-//                    adapter.updateItems(placeList)
-//                }
-//            }
-//            override fun onCancelled(error: DatabaseError) {
-//            }
-//        })
 
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
             override fun getMovementFlags(
@@ -109,6 +88,7 @@ class HomeListFragment : Fragment() {
         }
 
         fabRunMap.setOnClickListener {
+            viewModel.goToMap()
             val intent = Intent(context, MapsActivity::class.java)
             startActivity(intent)
             parentFragmentManager.beginTransaction()

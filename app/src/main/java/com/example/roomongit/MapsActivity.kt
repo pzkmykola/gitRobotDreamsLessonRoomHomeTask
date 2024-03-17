@@ -20,9 +20,12 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var viewModel: PlaceViewModel
-    private lateinit var locationOfLviv: PlaceFB//("49.842957, 24.031111", "Marker in Lviv")
-    private lateinit var locationOfTernopil: PlaceFB //("49.553516,25.5947767", "Marker in Ternopil")
-    private lateinit var locationOfSambir: PlaceFB//("49.5207147,23.2065501", "Marker in Sambir")
+//    //private lateinit var locationOfLviv: PlaceFB//("49.842957, 24.031111", "Marker in Lviv")
+//    private lateinit var locationOfTernopil: PlaceFB //("49.553516,25.5947767", "Marker in Ternopil")
+//    private lateinit var locationOfSambir: PlaceFB//("49.5207147,23.2065501", "Marker in Sambir")
+    private val locationOfLviv = PlaceFB("", "Lviv","49.842957,24.031111" ,"")
+    private val locationOfTernopil = PlaceFB("","Ternopil","49.553516,25.5947767","" )
+    private val locationOfSambir = PlaceFB("","Sambir","49.5207147,23.2065501", "")
     private var origin:PlaceFB? = null
     private var previousMarker:Marker? = null
     private var tappedList = mutableListOf<PlaceFB>() //mutabl
@@ -33,7 +36,20 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this)[PlaceViewModel::class.java]
-        viewModel = PlaceViewModel()
+        viewModel.uiState.observe(this) { uiState ->
+            when (uiState) {
+                is PlaceViewModel.UIState.Empty -> Unit
+                is PlaceViewModel.UIState.Processing -> Unit
+                is PlaceViewModel.UIState.Result -> {
+                    updateMap(uiState.placeList)
+                }
+                is PlaceViewModel.UIState.InMap -> {
+                    updateMap(uiState.placeList)
+                }
+            }
+
+        }
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -55,31 +71,9 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         mMap.setOnMarkerClickListener(this);
 
         mMap = googleMap
-        locationOfLviv = PlaceFB("", "Lviv","49.842957,24.031111" ,"")
-        locationOfTernopil = PlaceFB("","Ternopil","49.553516,25.5947767","" )
-        locationOfSambir = PlaceFB("","Sambir","49.5207147,23.2065501", "")
 
-        val coor1: LatLng = viewModel.setCoordinate(locationOfLviv)
-        tappedList.add(locationOfLviv)
-        //origin = locationOfLviv
-        mMap.addMarker(MarkerOptions()
-            .position(coor1)
-            .title(viewModel.setTitle(locationOfLviv)))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor1,8F))
-        val coor2 = viewModel.setCoordinate(locationOfTernopil)
-        tappedList.add(locationOfTernopil)
-        //destination = locationOfTernopil
-        mMap.addMarker(MarkerOptions()
-            .position(coor2)
-            .title(viewModel.setTitle(locationOfTernopil)))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor2,6F))
-        val coor3 = viewModel.setCoordinate(locationOfSambir)
-        tappedList.add(locationOfSambir)
-        mMap.addMarker(MarkerOptions()
-            .position(coor3)
-            .title(viewModel.setTitle(locationOfSambir)))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor3,6F))
 
+        updateMarkers()
 
         binding.fabPlaces.setOnClickListener {
             if(origin!= null) {
@@ -114,7 +108,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
         previousMarker = marker
 
-        if(origin == null){
+        if(origin == null || (origin != null && destination != null)){
             if(tappedList.isNotEmpty()) {
                 tappedList.forEach {
                     val coor = viewModel.toLatLng(it.location)//coordinatesOf)
@@ -141,4 +135,52 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         return true
     }
 
+    private fun updateMap(placeList: List<PlaceFB>){
+        if(placeList.isNotEmpty()) {
+            tappedList = mutableListOf<PlaceFB>()
+            placeList.forEach {
+                tappedList.add(it)
+            }
+            viewModel.resetMap(mMap)
+            updateMarkers()
+        }
+    }
+
+    private fun updateMarkers(){
+        if(tappedList.isNotEmpty()) {
+            tappedList.forEach {
+                val coor: LatLng = viewModel.setCoordinate(it)
+                mMap.addMarker(
+                    MarkerOptions()
+                        .position(coor)
+                        .title(viewModel.setTitle(it))
+                )
+            }
+        } else{
+            val coor1: LatLng = viewModel.setCoordinate(locationOfLviv)
+            tappedList.add(locationOfLviv)
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(coor1)
+                    .title(viewModel.setTitle(locationOfLviv))
+            )
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor1, 8F))
+            val coor2 = viewModel.setCoordinate(locationOfTernopil)
+            tappedList.add(locationOfTernopil)
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(coor2)
+                    .title(viewModel.setTitle(locationOfTernopil))
+            )
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor2, 6F))
+            val coor3 = viewModel.setCoordinate(locationOfSambir)
+            tappedList.add(locationOfSambir)
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(coor3)
+                    .title(viewModel.setTitle(locationOfSambir))
+            )
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coor3, 6F))
+        }
+    }
 }

@@ -25,6 +25,7 @@ class PlaceViewModel : ViewModel(), PlaceDao, PlaceMapDao {
     private val repo = MyApplication.getApp().repo
     private var _uiState = MutableLiveData<UIState>(UIState.Empty)
     val uiState: LiveData<UIState> = _uiState
+    private var _gotoMap:Boolean = false
 
     init
     {
@@ -34,33 +35,50 @@ class PlaceViewModel : ViewModel(), PlaceDao, PlaceMapDao {
     private fun getAll() {
         repo.database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                _uiState.value = UIState.Processing
-                placeList = mutableListOf()
-                if (snapshot.exists()) {
-                    snapshot.children.forEach {
-                        val taskKey: String = it.key!!
-                        if (taskKey != "") {
-                            val newItem = it.getValue(PlaceFB::class.java)
-                            if (newItem != null && taskKey == newItem.id) {
-                                Log.d(
-                                    "MYRES1",
-                                    "${newItem.id}/${newItem.title}/${newItem.location}/${newItem.urlImage}"
-                                )
-                                placeList.add(newItem)
+                if(!_gotoMap) {
+                    //CoroutineScope(Dispatchers.IO).launch {
+                    _uiState.value = UIState.Processing
+                    placeList = mutableListOf()
+                    if (snapshot.exists()) {
+                        snapshot.children.forEach {
+                            val taskKey: String = it.key!!
+                            if (taskKey != "") {
+                                val newItem = it.getValue(PlaceFB::class.java)
+                                if (newItem != null && taskKey == newItem.id) {
+                                    Log.d(
+                                        "MYRES1",
+                                        "${newItem.id}/${newItem.title}/${newItem.location}/${newItem.urlImage}"
+                                    )
+                                    placeList.add(newItem)
+                                }
                             }
                         }
+                        if (placeList.isNotEmpty()) {
+                            _uiState.postValue(UIState.Result(placeList))
+                        }
+                        _uiState.value = UIState.Empty
                     }
-                    if (placeList.isNotEmpty())  {
-                        _uiState.postValue(UIState.Result(placeList))
-                    }
-                    _uiState.value == UIState.Empty
                 }
             }
+            //}
             override fun onCancelled(error: DatabaseError) {
             }
         })
     }
 
+    fun goToMap(){
+        _gotoMap = true
+        _uiState.value = UIState.InMap(mutableListOf())
+        _uiState.postValue(UIState.InMap(placeList))
+    }
+
+    fun resetMap(map: GoogleMap){
+        if(map != null) {
+            map.clear()
+            _uiState.value = UIState.Empty
+            _gotoMap = false
+        }
+    }
     override fun add(title: String, location: String, urlImage:String):Boolean{
         return repo.add(title = title , location = location, urlImage = urlImage)
     }
@@ -175,6 +193,7 @@ class PlaceViewModel : ViewModel(), PlaceDao, PlaceMapDao {
     sealed class UIState {
         object Empty : UIState()
         object Processing : UIState()
-        class Result(val list: List<PlaceFB>) : UIState()
+        class Result(val placeList: List<PlaceFB>) : UIState()
+        class InMap(val placeList: List<PlaceFB>) : UIState()
     }
 }
