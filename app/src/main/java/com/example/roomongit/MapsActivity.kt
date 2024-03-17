@@ -67,7 +67,6 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
-
         mMap = googleMap
         mMap.setOnMapClickListener(this)
         mMap.setOnMarkerClickListener(this);

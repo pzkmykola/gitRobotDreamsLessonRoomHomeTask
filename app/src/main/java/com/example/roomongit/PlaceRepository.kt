@@ -1,13 +1,7 @@
 package com.example.roomongit
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
-
 
 class PlaceRepository(val database: DatabaseReference)  {
     fun add(title:String?, location:String?, urlImage:String):Boolean {
