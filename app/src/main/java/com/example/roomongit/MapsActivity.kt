@@ -3,16 +3,18 @@ package com.example.roomongit
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.roomongit.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.UiSettings
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.RequestCreator
 
 
 class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
@@ -21,9 +23,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var viewModel: PlaceViewModel
-//    //private lateinit var locationOfLviv: PlaceFB//("49.842957, 24.031111", "Marker in Lviv")
-//    private lateinit var locationOfTernopil: PlaceFB //("49.553516,25.5947767", "Marker in Ternopil")
-//    private lateinit var locationOfSambir: PlaceFB//("49.5207147,23.2065501", "Marker in Sambir")
+
     private val locationOfLviv = PlaceFB("", "Lviv","49.842957,24.031111" ,"")
     private val locationOfTernopil = PlaceFB("","Ternopil","49.553516,25.5947767","" )
     private val locationOfSambir = PlaceFB("","Sambir","49.5207147,23.2065501", "")
@@ -31,6 +31,8 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     private var previousMarker:Marker? = null
     private var tappedList = mutableListOf<PlaceFB>() //mutabl
     private var destination:PlaceFB? = null//:eListOf<PlaceMap>()
+    private var imageRequest: String = ""
+    private var reqCompleted = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,6 +48,9 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
                 }
                 is PlaceViewModel.UIState.InMap -> {
                     updateMap(uiState.placeList)
+                }
+                is PlaceViewModel.UIState.ImageMap -> {
+                      imageRequest = uiState.req
                 }
             }
 
@@ -76,9 +81,11 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         updateMarkers()
 
         binding.fabPlaces.setOnClickListener {
+            val query:String = binding.queryId.text.toString()
             if(origin!= null) {
-                binding.tapText.text = "Tapped to get places"
-                viewModel.getMyPlaces(mMap, origin!!)
+                binding.tapText.text = "Tapped to get places with ${query}"
+                viewModel.getMyPlaces(mMap, origin!!,query)
+                reqCompleted = true
             }else{
                 binding.tapText.text = "Place origin point!!!"
             }
@@ -88,12 +95,29 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
             if((origin != null) && (destination != null)){
                 binding.tapText.text = "Tapped to get routes"
                 viewModel.getMyRoutes(mMap, origin!!, destination!!)
+                reqCompleted = true
             } else {
                 binding.tapText.text = "Place origin and destination points!!!"
             }
 
         }
+
+        binding.mapImage.setOnClickListener {
+            if (reqCompleted) {
+                reqCompleted = false
+                mMap.clear()
+                updateMarkers()
+            }
+//
+//            if(imageRequest != ""){
+//                Glide.with(binding.mapImage.context)
+//                    .load(imageRequest)
+//                    .into(binding.mapImage)
+//            }
+//            imageRequest = ""
+        }
     }
+
     override fun onMapClick(point: LatLng) {
         binding.tapText.text = "tapped, point=$point"
     }
@@ -114,6 +138,13 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
                     val coor = viewModel.toLatLng(it.location)//coordinatesOf)
                     if (marker.position == coor) {
                         origin = it
+                        destination = null//???
+                        if(it.urlImage != "") {
+                            Glide.with(binding.mapImage.context)
+                                .load(it.urlImage)
+                                .into(binding.mapImage)
+                        }
+                        binding.mapImage
                         binding.tapText.text = "Origin is defined to ${it.title}"
                         return@forEach
                     }
@@ -134,7 +165,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
 
         return true
     }
-
+    
     private fun updateMap(placeList: List<PlaceFB>){
         if(placeList.isNotEmpty()) {
             tappedList = mutableListOf<PlaceFB>()

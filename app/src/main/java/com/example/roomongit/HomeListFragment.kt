@@ -18,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.squareup.picasso.Picasso
 
 
 class HomeListFragment : Fragment() {
@@ -55,6 +56,7 @@ class HomeListFragment : Fragment() {
                 }
 
                 is PlaceViewModel.UIState.InMap -> Unit
+                is PlaceViewModel.UIState.ImageMap -> Unit
             }
 
         }

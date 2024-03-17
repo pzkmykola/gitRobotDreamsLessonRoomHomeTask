@@ -39,12 +39,21 @@
                 android:layout_margin="8dp"/>
             <ImageView
                 android:id="@+id/mapImage"
-                android:layout_marginStart="24dp"
+                android:clickable="true"
+                android:layout_marginStart="16dp"
                 android:layout_marginBottom="4dp"
                 android:src="@mipmap/ic_launcher"
-                android:layout_width="200dp"
+                android:layout_width="240dp"
                 android:layout_height="100dp"/>
         </LinearLayout>
-
+        <EditText
+            android:id="@+id/queryId"
+            android:text="tourist_attraction"
+            android:backgroundTint="@color/common_google_signin_btn_text_dark_focused"
+            android:tooltipText="Enter query:"
+            android:textSize="16dp"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 </fragment>
