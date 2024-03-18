@@ -77,7 +77,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         mMap.setOnMarkerClickListener(this);
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isCompassEnabled = true
-
+        mMap.uiSettings.isMapToolbarEnabled = true
         updateMarkers()
 
         binding.fabPlaces.setOnClickListener {
@@ -115,6 +115,13 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
 //                    .into(binding.mapImage)
 //            }
 //            imageRequest = ""
+        }
+
+        binding.fabExit.setOnClickListener {
+            viewModel.resetMap(mMap)
+            supportFragmentManager.beginTransaction()
+                .replace(com.google.android.material.R.id.container, HomeListFragment())
+                .commitNow()
         }
     }
 

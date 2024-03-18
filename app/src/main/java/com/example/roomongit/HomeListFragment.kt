@@ -95,7 +95,7 @@ class HomeListFragment : Fragment() {
             startActivity(intent)
             parentFragmentManager.beginTransaction()
                 .add(com.google.android.material.R.id.container, SupportMapFragment())
-                .addToBackStack("mapFragment")
+                .addToBackStack("homeFragment")
                 .commit()
         }
     }
