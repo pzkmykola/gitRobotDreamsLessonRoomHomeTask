@@ -94,9 +94,20 @@ class HomeListFragment : Fragment() {
             val intent = Intent(context, MapsActivity::class.java)
             startActivity(intent)
             parentFragmentManager.beginTransaction()
-                .add(com.google.android.material.R.id.container, SupportMapFragment())
-                .addToBackStack("homeFragment")
+                .addToBackStack(null)
+                .replace(com.google.android.material.R.id.container, SupportMapFragment())
                 .commit()
         }
+
+//        parentFragmentManager.addOnBackStackChangedListener {
+//            parentFragmentManager
+//                .fragments
+//                .lastOrNull()?.onResume()
+//        }
     }
+
+//    override fun onResume() {
+//        super.onResume()
+//        Toast.makeText(requireContext(), "Return from Maps",Toast.LENGTH_LONG).show()
+//    }
 }

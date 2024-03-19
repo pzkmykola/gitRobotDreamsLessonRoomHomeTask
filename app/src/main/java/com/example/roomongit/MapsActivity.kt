@@ -1,7 +1,10 @@
 package com.example.roomongit
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.roomongit.databinding.ActivityMapsBinding
@@ -78,6 +81,28 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMapToolbarEnabled = true
+        mMap.uiSettings.isScrollGesturesEnabled = true
+
+//        if (ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+////            return
+//        }
+//        mMap.isMyLocationEnabled = true
+//        mMap.uiSettings.isMyLocationButtonEnabled = true
+
         updateMarkers()
 
         binding.fabPlaces.setOnClickListener {
@@ -119,12 +144,17 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
 
         binding.fabExit.setOnClickListener {
             viewModel.resetMap(mMap)
-            supportFragmentManager.beginTransaction()
-                .replace(com.google.android.material.R.id.container, HomeListFragment())
-                .commitNow()
+            goBack()
+//            supportFragmentManager.beginTransaction()
+//                .add(com.google.android.material.R.id.container, HomeListFragment())
+//                .addToBackStack("mapFragment")
+//                .commit()
         }
     }
 
+    private fun goBack(){
+        //requireActivity().onBackPressed()
+    }
     override fun onMapClick(point: LatLng) {
         binding.tapText.text = "tapped, point=$point"
     }

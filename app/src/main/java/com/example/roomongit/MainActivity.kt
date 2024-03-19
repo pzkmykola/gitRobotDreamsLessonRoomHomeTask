@@ -15,8 +15,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 class MainActivity : AppCompatActivity(), OnAuthLaunch,
     OnAddClickListener {
 
-    private lateinit var supportMapFragment : SupportMapFragment
-    private lateinit var myMap: GoogleMap
+//    private lateinit var supportMapFragment : SupportMapFragment
+//    private lateinit var myMap: GoogleMap
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch,
     override fun onFabClick() {
         supportFragmentManager.beginTransaction()
             .add(com.google.android.material.R.id.container, AddPlaceFragment())
-            .addToBackStack("addPlaceFragment")
+//            .addToBackStack("addPlaceFragment")
             .commit()
     }
 }

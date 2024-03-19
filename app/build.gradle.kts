@@ -58,6 +58,9 @@ dependencies {
 //    annotationProcessor("androidx.room:room-compiler:2.6.1")
 //    ksp("androidx.room:room-compiler:2.6.1")
 
+    //fragments
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
+    
     //google maps
     implementation ("com.google.android.gms:play-services-maps:18.2.0")
     implementation ("com.google.maps.android:android-maps-utils:3.5.3")

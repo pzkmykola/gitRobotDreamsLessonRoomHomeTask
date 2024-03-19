@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.roomongit.databinding.InputFragmentLayoutBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -54,16 +56,6 @@ class AddPlaceFragment(private var place: PlaceFB? = null): BottomSheetDialogFra
                     snackbar("Something is wrong, try again!!!")
                 }
             }
-//            val target = database.reference.child(
-//                account?.id ?: "unknown_account"
-//            )
-//                .child("clients")
-//                .child(UUID.randomUUID().toString())
-//            target.setValue(
-//                inputField.text.toString()
-//            ).addOnCompleteListener {
-//                parentFragmentManager.popBackStack()
-//            }
         }
     }
 
