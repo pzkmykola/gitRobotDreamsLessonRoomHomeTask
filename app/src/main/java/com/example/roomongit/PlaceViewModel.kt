@@ -1,7 +1,6 @@
 package com.example.roomongit
 
 import android.util.Log
-import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,8 +13,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.maps.android.PolyUtil
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.RequestCreator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -87,8 +84,7 @@ class PlaceViewModel : ViewModel(), PlaceDao, PlaceMapDao {
     }
 
     override fun setCoordinate(placeMap: PlaceFB): LatLng {
-        val coor:LatLng = toLatLng(placeMap.location)
-        return coor
+        return toLatLng(placeMap.location)
     }
 
     override fun setTitle(placeMap: PlaceFB): String {
@@ -137,10 +133,10 @@ class PlaceViewModel : ViewModel(), PlaceDao, PlaceMapDao {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(coor1,8F))
         CoroutineScope(Dispatchers.IO).launch {
             val result = Client.client.create(ApiInterface2::class.java)
-                .getNearbyPlaces(placeMap.location,"1000",queryType,Keys.apiKey4)
+                .getNearbyPlaces(placeMap.location,"1000",queryType)//,Keys.apiKey4)
             if (result.isSuccessful) {
                 Log.d("MAPS_PLACES_QUERY", "Checked result for type $queryType")
-                var locations = mutableListOf<Location>()
+                val locations = mutableListOf<Location>()
                 result.body()?.let {
                     it.results.forEach { result ->
                         Log.d("MAPS_PLACES", "Result for each place")
@@ -205,8 +201,8 @@ class PlaceViewModel : ViewModel(), PlaceDao, PlaceMapDao {
     }
 
     sealed class UIState {
-        object Empty : UIState()
-        object Processing : UIState()
+        data object Empty : UIState()
+        data object Processing : UIState()
         class Result(val placeList: List<PlaceFB>) : UIState()
         class InMap(val placeList: List<PlaceFB>) : UIState()
         class ImageMap(val req: String) : UIState()

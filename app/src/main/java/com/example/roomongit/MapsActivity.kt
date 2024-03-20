@@ -13,9 +13,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.RequestCreator
-
 
 class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
@@ -83,7 +80,8 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         binding.fabPlaces.setOnClickListener {
             val query:String = binding.queryId.text.toString()
             if(origin!= null) {
-                binding.tapText.text = "Tapped to get places with ${query}"
+                val tappedText = "Tapped to get places with $query"
+                binding.tapText.text = tappedText
                 viewModel.getMyPlaces(mMap, origin!!,query)
                 reqCompleted = true
             }else{
@@ -119,12 +117,14 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     }
 
     override fun onMapClick(point: LatLng) {
-        binding.tapText.text = "tapped, point=$point"
+        val tappedText = "tapped, point=$point"
+        binding.tapText.text = tappedText
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
         val locAddress = marker.title
-        binding.tapText.text = "tapped $locAddress"
+        var tappedText = "tapped $locAddress"
+        binding.tapText.text = tappedText
 
         if (previousMarker != null) {
             previousMarker?.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
@@ -145,7 +145,8 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
                                 .into(binding.mapImage)
                         }
                         binding.mapImage
-                        binding.tapText.text = "Origin is defined to ${it.title}"
+                        tappedText = "Origin is defined to ${it.title}"
+                        binding.tapText.text = tappedText
                         return@forEach
                     }
                 }
@@ -156,7 +157,8 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
                     val coor = viewModel.toLatLng(it.location)
                     if (marker.position == coor) {
                         destination = it
-                        binding.tapText.text = "Destination is defined to ${it.title}"
+                        tappedText ="Destination is defined to ${it.title}"
+                        binding.tapText.text = tappedText
                         return@forEach
                     }
                 }
@@ -168,7 +170,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     
     private fun updateMap(placeList: List<PlaceFB>){
         if(placeList.isNotEmpty()) {
-            tappedList = mutableListOf<PlaceFB>()
+            tappedList = mutableListOf()
             placeList.forEach {
                 tappedList.add(it)
             }

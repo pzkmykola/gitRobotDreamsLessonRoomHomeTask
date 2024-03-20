@@ -13,7 +13,6 @@ import com.google.android.material.snackbar.Snackbar
 class AddPlaceFragment(private var place: PlaceFB? = null): BottomSheetDialogFragment() {
     private lateinit var binding:InputFragmentLayoutBinding
     private var closeFunction: ((Boolean) -> Unit)? = null
-    private var addTodoSuccess: Boolean = false
     private lateinit var viewModel: PlaceViewModel
 
     override fun onCreateView(
