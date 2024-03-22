@@ -2,7 +2,7 @@ package com.example.roomongit
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.annotations.SerializedName
-//
+
 data class PlaceFB (
     var id: String = "",
     var title: String = "",

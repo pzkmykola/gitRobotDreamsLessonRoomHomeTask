@@ -53,16 +53,6 @@ class AddPlaceFragment(private var place: PlaceFB? = null): BottomSheetDialogFra
                     snackbar("Something is wrong, try again!!!")
                 }
             }
-//            val target = database.reference.child(
-//                account?.id ?: "unknown_account"
-//            )
-//                .child("clients")
-//                .child(UUID.randomUUID().toString())
-//            target.setValue(
-//                inputField.text.toString()
-//            ).addOnCompleteListener {
-//                parentFragmentManager.popBackStack()
-//            }
         }
     }
 

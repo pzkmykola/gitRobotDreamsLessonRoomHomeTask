@@ -49,8 +49,7 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch,
 
     override fun onFabClick() {
         supportFragmentManager.beginTransaction()
-            .add(com.google.android.material.R.id.container, AddPlaceFragment())
-            .addToBackStack("addPlaceFragment")
+            .replace(R.id.container, AddPlaceFragment())
             .commit()
     }
 }
