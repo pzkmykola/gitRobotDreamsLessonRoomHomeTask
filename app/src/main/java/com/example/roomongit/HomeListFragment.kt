@@ -25,8 +25,7 @@ class HomeListFragment : Fragment() {
     private lateinit var  listView: RecyclerView
     private lateinit var adapter: PlaceListAdapter
     private lateinit var viewModel: PlaceViewModel
-    //private val target = MyApplication.getApp().target
-    private lateinit var placeList: MutableList<PlaceFB>
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -84,9 +83,6 @@ class HomeListFragment : Fragment() {
         fab.setOnClickListener {
             val activity = requireActivity() as OnAddClickListener
             activity.onFabClick()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.container, AddPlaceFragment())
-                .commit()
         }
 
         fabRunMap.setOnClickListener {
