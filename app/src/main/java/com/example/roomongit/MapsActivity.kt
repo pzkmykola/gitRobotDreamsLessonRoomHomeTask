@@ -1,6 +1,7 @@
 package com.example.roomongit
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -17,7 +18,9 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
-
+    companion object {
+        private const val MAP_BUNDLE_KEY = "map_bundle_key"
+    }
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var viewModel: PlaceViewModel
@@ -31,24 +34,32 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     private var destination:PlaceFB? = null
     private var imageRequest: String = ""
     private var reqCompleted = false
+    private lateinit var persistedMapBundle: Bundle
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBundle(MAP_BUNDLE_KEY, persistedMapBundle)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        persistedMapBundle = savedInstanceState?.getBundle(MAP_BUNDLE_KEY) ?: Bundle()
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this)[PlaceViewModel::class.java]
-        viewModel.uiState.observe(this) { uiState ->
-            when (uiState) {
-                is PlaceViewModel.UIState.Empty -> Unit
-                is PlaceViewModel.UIState.Processing -> Unit
-                is PlaceViewModel.UIState.Result -> {
-                    updateMap(uiState.placeList)
-                }
-                is PlaceViewModel.UIState.ImageMap -> {
-                    imageRequest = uiState.req
-                }
-            }
-        }
+//        viewModel.uiState.observe(this) { uiState ->
+//            when (uiState) {
+//                is PlaceViewModel.UIState.Empty -> Unit
+//                is PlaceViewModel.UIState.Processing -> Unit
+//                is PlaceViewModel.UIState.Result -> {
+//                    updateMap(uiState.placeList)
+//                }
+//                is PlaceViewModel.UIState.ImageMap -> {
+//                    imageRequest = uiState.req
+//                }
+//            }
+//        }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -72,6 +83,20 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMapToolbarEnabled = true
         mMap.uiSettings.isScrollGesturesEnabled = true
+
+        viewModel.uiState.observe(this) { uiState ->
+            Log.d("MAPS:", "View model state ${uiState.toString()}")
+            when (uiState) {
+                is PlaceViewModel.UIState.Empty -> Unit
+                is PlaceViewModel.UIState.Processing -> Unit
+                is PlaceViewModel.UIState.Result -> {
+                    updateMap(uiState.placeList)
+                }
+                is PlaceViewModel.UIState.ImageMap -> {
+                    imageRequest = uiState.req
+                }
+            }
+        }
 
 //        if (ActivityCompat.checkSelfPermission(
 //                this,
@@ -189,13 +214,15 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     }
     
     private fun updateMap(placeList: List<PlaceFB>){
-        if(placeList.isNotEmpty()) {
-            tappedList = mutableListOf()
-            placeList.forEach {
-                tappedList.add(it)
+        if(mMap!= null) {
+            if (placeList.isNotEmpty()) {
+                tappedList = mutableListOf()
+                placeList.forEach {
+                    tappedList.add(it)
+                }
+                mMap.clear()
+                updateMarkers()
             }
-            mMap.clear()
-            updateMarkers()
         }
     }
 
