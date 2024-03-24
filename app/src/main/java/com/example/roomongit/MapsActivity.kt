@@ -119,7 +119,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         binding.mapImage.setOnClickListener {
             if (reqCompleted) {
                 reqCompleted = false
-                //mMap.clear()
+                mMap.clear()
                 updateMarkers()
             }
 //
@@ -194,13 +194,12 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
             placeList.forEach {
                 tappedList.add(it)
             }
-
+            mMap.clear()
             updateMarkers()
         }
     }
 
     private fun updateMarkers(){
-        mMap.clear()
         if(tappedList.isNotEmpty()) {
             tappedList.forEach {
                 val coor: LatLng = viewModel.setCoordinate(it)
