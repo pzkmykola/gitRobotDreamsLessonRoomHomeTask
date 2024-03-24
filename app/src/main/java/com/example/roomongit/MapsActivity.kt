@@ -37,7 +37,18 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this)[PlaceViewModel::class.java]
-
+        viewModel.uiState.observe(this) { uiState ->
+            when (uiState) {
+                is PlaceViewModel.UIState.Empty -> Unit
+                is PlaceViewModel.UIState.Processing -> Unit
+                is PlaceViewModel.UIState.Result -> {
+                    updateMap(uiState.placeList)
+                }
+                is PlaceViewModel.UIState.ImageMap -> {
+                    imageRequest = uiState.req
+                }
+            }
+        }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -54,19 +65,6 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
-        viewModel.uiState.observe(this) { uiState ->
-            when (uiState) {
-                is PlaceViewModel.UIState.Empty -> Unit
-                is PlaceViewModel.UIState.Processing -> Unit
-                is PlaceViewModel.UIState.Result -> {
-                    updateMap(uiState.placeList)
-                }
-                is PlaceViewModel.UIState.ImageMap -> {
-                    imageRequest = uiState.req
-                }
-            }
-
-        }
         mMap = googleMap
         mMap.setOnMapClickListener(this)
         mMap.setOnMarkerClickListener(this);
