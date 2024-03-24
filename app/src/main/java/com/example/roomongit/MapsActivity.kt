@@ -1,10 +1,7 @@
 package com.example.roomongit
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.roomongit.databinding.ActivityMapsBinding
@@ -16,8 +13,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.RequestCreator
 
 
 class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
@@ -26,14 +21,14 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var viewModel: PlaceViewModel
-
+    private lateinit var mapFragment:SupportMapFragment
     private val locationOfLviv = PlaceFB("", "Lviv","49.842957,24.031111" ,"")
     private val locationOfTernopil = PlaceFB("","Ternopil","49.553516,25.5947767","" )
     private val locationOfSambir = PlaceFB("","Sambir","49.5207147,23.2065501", "")
     private var origin:PlaceFB? = null
     private var previousMarker:Marker? = null
-    private var tappedList = mutableListOf<PlaceFB>() //mutabl
-    private var destination:PlaceFB? = null//:eListOf<PlaceMap>()
+    private var tappedList = mutableListOf<PlaceFB>()
+    private var destination:PlaceFB? = null
     private var imageRequest: String = ""
     private var reqCompleted = false
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,25 +37,9 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this)[PlaceViewModel::class.java]
-        viewModel.uiState.observe(this) { uiState ->
-            when (uiState) {
-                is PlaceViewModel.UIState.Empty -> Unit
-                is PlaceViewModel.UIState.Processing -> Unit
-                is PlaceViewModel.UIState.Result -> {
-                    updateMap(uiState.placeList)
-                }
-                is PlaceViewModel.UIState.InMap -> {
-                    updateMap(uiState.placeList)
-                }
-                is PlaceViewModel.UIState.ImageMap -> {
-                      imageRequest = uiState.req
-                }
-            }
-
-        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = supportFragmentManager
+        mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
@@ -75,6 +54,19 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
+        viewModel.uiState.observe(this) { uiState ->
+            when (uiState) {
+                is PlaceViewModel.UIState.Empty -> Unit
+                is PlaceViewModel.UIState.Processing -> Unit
+                is PlaceViewModel.UIState.Result -> {
+                    updateMap(uiState.placeList)
+                }
+                is PlaceViewModel.UIState.ImageMap -> {
+                    imageRequest = uiState.req
+                }
+            }
+
+        }
         mMap = googleMap
         mMap.setOnMapClickListener(this)
         mMap.setOnMarkerClickListener(this);
@@ -102,7 +94,6 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
 //        }
 //        mMap.isMyLocationEnabled = true
 //        mMap.uiSettings.isMyLocationButtonEnabled = true
-
         updateMarkers()
 
         binding.fabPlaces.setOnClickListener {
@@ -130,7 +121,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         binding.mapImage.setOnClickListener {
             if (reqCompleted) {
                 reqCompleted = false
-                mMap.clear()
+                //mMap.clear()
                 updateMarkers()
             }
 //
@@ -145,15 +136,11 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         binding.fabExit.setOnClickListener {
             viewModel.resetMap(mMap)
             goBack()
-//            supportFragmentManager.beginTransaction()
-//                .add(com.google.android.material.R.id.container, HomeListFragment())
-//                .addToBackStack("mapFragment")
-//                .commit()
         }
     }
 
     private fun goBack(){
-        //requireActivity().onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
     override fun onMapClick(point: LatLng) {
         binding.tapText.text = "tapped, point=$point"
@@ -205,16 +192,17 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     
     private fun updateMap(placeList: List<PlaceFB>){
         if(placeList.isNotEmpty()) {
-            tappedList = mutableListOf<PlaceFB>()
+            tappedList = mutableListOf()
             placeList.forEach {
                 tappedList.add(it)
             }
-            viewModel.resetMap(mMap)
+
             updateMarkers()
         }
     }
 
     private fun updateMarkers(){
+        mMap.clear()
         if(tappedList.isNotEmpty()) {
             tappedList.forEach {
                 val coor: LatLng = viewModel.setCoordinate(it)
@@ -225,6 +213,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
                 )
             }
         } else{
+            //tappedList = mutableListOf()
             val coor1: LatLng = viewModel.setCoordinate(locationOfLviv)
             tappedList.add(locationOfLviv)
             mMap.addMarker(

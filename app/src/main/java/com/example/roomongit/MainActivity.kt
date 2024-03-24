@@ -15,23 +15,26 @@ import com.google.firebase.auth.GoogleAuthProvider
 class MainActivity : AppCompatActivity(), OnAuthLaunch,
     OnAddClickListener {
 
-//    private lateinit var supportMapFragment : SupportMapFragment
+    //    private lateinit var supportMapFragment : SupportMapFragment
 //    private lateinit var myMap: GoogleMap
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
     }
+
     override fun launch(intent: Intent) {
         startActivityForResult(intent, 1)
     }
+
     override fun showListFragment() {
         supportFragmentManager.beginTransaction()
             .replace(com.google.android.material.R.id.container, HomeListFragment())
             .commit()
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == 1){
+        if (requestCode == 1) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val result = task.getResult(ApiException::class.java)
@@ -39,13 +42,13 @@ class MainActivity : AppCompatActivity(), OnAuthLaunch,
                 val auth = FirebaseAuth.getInstance()
                 auth.signInWithCredential(credential)
                     .addOnCompleteListener {
-                        if(it.isSuccessful){
+                        if (it.isSuccessful) {
                             showListFragment()
-                        } else{
+                        } else {
                             Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
                         }
                     }
-            } catch (e:ApiException) {
+            } catch (e: ApiException) {
                 Toast.makeText(this, "Error $e", Toast.LENGTH_SHORT).show()
             }
         }
@@ -67,3 +70,6 @@ interface OnAddClickListener{
     fun onFabClick()
 }
 
+//interface OnBackClickListener{
+//    fun onFabExitClick()
+//}

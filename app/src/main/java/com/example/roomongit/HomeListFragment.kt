@@ -2,12 +2,9 @@ package com.example.roomongit
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -15,10 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.squareup.picasso.Picasso
 
 
 class HomeListFragment : Fragment() {
@@ -54,7 +47,6 @@ class HomeListFragment : Fragment() {
                     listView.adapter = adapter
                 }
 
-                is PlaceViewModel.UIState.InMap -> Unit
                 is PlaceViewModel.UIState.ImageMap -> Unit
             }
 
@@ -90,20 +82,9 @@ class HomeListFragment : Fragment() {
             val intent = Intent(context, MapsActivity::class.java)
             startActivity(intent)
             parentFragmentManager.beginTransaction()
-                .addToBackStack(null)
-                .replace(com.google.android.material.R.id.container, SupportMapFragment())
+                .add(com.google.android.material.R.id.container, SupportMapFragment())
+                .addToBackStack("mapFragment")
                 .commit()
         }
-
-//        parentFragmentManager.addOnBackStackChangedListener {
-//            parentFragmentManager
-//                .fragments
-//                .lastOrNull()?.onResume()
-//        }
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        Toast.makeText(requireContext(), "Return from Maps",Toast.LENGTH_LONG).show()
-//    }
 }
