@@ -1,11 +1,21 @@
 package com.example.roomongit
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.example.roomongit.PermissionUtils.PermissionDeniedDialog.Companion.newInstance
+import com.example.roomongit.PermissionUtils.isPermissionGranted
 import com.example.roomongit.databinding.ActivityMapsBinding
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -14,12 +24,19 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.tasks.CancellationTokenSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 
 class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
-    GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
+    GoogleMap.OnMarkerClickListener, OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
+    GoogleMap.OnMyLocationClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
     companion object {
         private const val MAP_BUNDLE_KEY = "map_bundle_key"
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
@@ -35,7 +52,8 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
     private var imageRequest: String = ""
     private var reqCompleted = false
     private lateinit var persistedMapBundle: Bundle
-
+    private var permissionDenied = false
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBundle(MAP_BUNDLE_KEY, persistedMapBundle)
@@ -48,18 +66,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this)[PlaceViewModel::class.java]
-//        viewModel.uiState.observe(this) { uiState ->
-//            when (uiState) {
-//                is PlaceViewModel.UIState.Empty -> Unit
-//                is PlaceViewModel.UIState.Processing -> Unit
-//                is PlaceViewModel.UIState.Result -> {
-//                    updateMap(uiState.placeList)
-//                }
-//                is PlaceViewModel.UIState.ImageMap -> {
-//                    imageRequest = uiState.req
-//                }
-//            }
-//        }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -83,6 +90,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMapToolbarEnabled = true
         mMap.uiSettings.isScrollGesturesEnabled = true
+        mMap.uiSettings.isMyLocationButtonEnabled = true
 
         viewModel.uiState.observe(this) { uiState ->
             Log.d("MAPS:", "View model state ${uiState.toString()}")
@@ -97,26 +105,9 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
                 }
             }
         }
-
-//        if (ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-////            return
-//        }
-//        mMap.isMyLocationEnabled = true
-//        mMap.uiSettings.isMyLocationButtonEnabled = true
+        mMap.setOnMyLocationButtonClickListener(this)
+        mMap.setOnMyLocationClickListener(this)
+        enableMyLocation()//new
         updateMarkers()
 
         binding.fabPlaces.setOnClickListener {
@@ -185,7 +176,7 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
                     val coor = viewModel.toLatLng(it.location)//coordinatesOf)
                     if (marker.position == coor) {
                         origin = it
-                        destination = null//???
+                        destination = null
                         if(it.urlImage != "") {
                             Glide.with(binding.mapImage.context)
                                 .load(it.urlImage)
@@ -212,7 +203,127 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
 
         return true
     }
-    
+
+    override fun onMyLocationClick(location: Location) {
+        binding.tapText.text = "Current location:\n$location"
+    }
+
+    override fun onMyLocationButtonClick(): Boolean {
+        var placeHolder:String = ""
+        if(mMap.isMyLocationEnabled){
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                binding.tapText.text = "Permission to get location denied"
+                return false
+            }
+            CoroutineScope(Dispatchers.IO).launch{
+                val result = fusedLocationClient.getCurrentLocation(
+                    Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+                    CancellationTokenSource().token,).await()
+                result?.let { location ->
+                    if(location != null){
+                        placeHolder = "MyLocation - " + "lat: " +location.latitude.toString() + " long: " + location.longitude.toString()
+                        return@let
+                    }
+                }
+            }
+        }
+        // Return false so that we don't consume the event and the default behavior still occurs
+        // (the camera animates to the user's current position).
+        if(placeHolder != "") binding.tapText.text = placeHolder
+        return false
+    }
+
+    // [START maps_check_location_permission_result]
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+            return
+        }
+        // Enable the my location layer if the permission has been granted.
+        // Permission was denied. Display an error message
+        // [START_EXCLUDE]
+        // Display the missing permission error dialog when the fragments resume.
+        // [END_EXCLUDE]
+        if (isPermissionGranted(permissions, grantResults, Manifest.permission.ACCESS_FINE_LOCATION))
+            enableMyLocation()
+        else permissionDenied = true
+    }
+    /**
+     * Enables the My Location layer if the fine location permission has been granted.
+     */
+    private fun enableMyLocation() {
+
+        // [START maps_check_location_permission]
+        // 1. Check if permissions are granted, if so, enable the my location layer
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            mMap.isMyLocationEnabled = true
+            return
+        }
+
+        // 2. If if a permission rationale dialog should be shown
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) || ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        ) {
+            PermissionUtils.RationaleDialog.newInstance(
+                LOCATION_PERMISSION_REQUEST_CODE, true
+            ).show(supportFragmentManager, "dialog")
+            return
+        }
+
+        // 3. Otherwise, request permission
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            LOCATION_PERMISSION_REQUEST_CODE
+        )
+        // [END maps_check_location_permission]
+    }
+
+    // [END maps_check_location_permission_result]
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        if (permissionDenied) {
+            // Permission was not granted, display error dialog.
+            showMissingPermissionError()
+            permissionDenied = false
+        }
+    }
+
+    /**
+     * Displays a dialog with error message explaining that the location permission is missing.
+     */
+    private fun showMissingPermissionError() {
+        newInstance(true).show(supportFragmentManager, "dialog")
+    }
     private fun updateMap(placeList: List<PlaceFB>){
         if(mMap!= null) {
             if (placeList.isNotEmpty()) {
@@ -237,7 +348,6 @@ class MapsActivity : AppCompatActivity(), GoogleMap.OnMapClickListener,
                 )
             }
         } else{
-            //tappedList = mutableListOf()
             val coor1: LatLng = viewModel.setCoordinate(locationOfLviv)
             tappedList.add(locationOfLviv)
             mMap.addMarker(
